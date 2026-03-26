@@ -58,7 +58,7 @@ const SafeImage = ({ src, alt, className, ...props }) => {
   );
 };
 
-// Mapeamento de Assets - Organize seus arquivos na pasta /public com estes nomes exatos
+// Mapeamento de Assets - Mantendo .png como solicitado
 const ASSETS = {
   logoFullBlack: "logo-full-black.png",
   logoHorizontal: "logo-horizontal.png",
@@ -140,7 +140,6 @@ const App = () => {
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
           .text-balance { text-wrap: balance; }
-          /* Mascara suave para o Hero para evitar linhas duras */
           .hero-mask {
             mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
@@ -166,14 +165,11 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - PADRÃO SUAVIZADO E LOGO COM GLOW */}
+      {/* HERO SECTION */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Background Pattern - Ajustado para ser levemente mais nítido que o anterior mas sem linhas duras */}
         <div className="absolute inset-0 opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center blur-[1.5px]">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110" />
         </div>
-        
-        {/* Camada de fumaça radial para limpeza visual central */}
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_85%)]"></div>
 
         <div className="relative z-10 text-center space-y-12 animate-fade-in w-full max-w-5xl">
@@ -182,19 +178,14 @@ const App = () => {
               Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
             </p>
           </div>
-          
-          {/* LOGO PRINCIPAL COM EFEITO ESFUMAÇADO (Glow radial para isolar do fundo) */}
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-8 sm:p-12">
-            {/* O "esfumaçado" atrás da logo */}
             <div className="absolute inset-0 bg-white/80 blur-[60px] rounded-full scale-110 -z-10"></div>
-            
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
               className="w-full max-w-[280px] sm:max-w-2xl md:max-w-4xl mx-auto object-contain" 
             />
           </div>
-
           <div className="pt-8">
              <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-10 h-10 sm:w-12" />
@@ -214,7 +205,6 @@ const App = () => {
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
               </p>
             </div>
-            
             <div className="grid gap-10 sm:gap-12">
               {[
                 { title: "Presença em campo", desc: "Visitação activa e relacionamento directo.", icon: <MapPin /> },
@@ -241,7 +231,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: FUNDADORA - RESPIRO AUMENTADO PARA O ACENTO */}
+      {/* SEÇÃO: FUNDADORA */}
       <section id="fundadora" className="bg-gray-50 py-24 sm:py-32 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="relative order-2 lg:order-1">
@@ -255,17 +245,14 @@ const App = () => {
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
-          
           <div className="space-y-10 order-1 lg:order-2">
-            <div className="space-y-6 pt-20"> {/* Respiro extra para garantir que o acento de Mariá não bata no texto acima */}
+            <div className="space-y-6 pt-20">
               <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300">Fundadora</span>
               <h3 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tighter text-balance leading-none mt-6">Mariá Pettenazzi</h3>
               <p className="text-xl sm:text-2xl font-medium text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
-            
             <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
-              
               <div className="pt-8 border-t border-gray-200">
                 <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase">Trajetória na Mercur S.A.</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -289,7 +276,6 @@ const App = () => {
             <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-30 block italic">Portfólio Estratégico</span>
             <h3 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase text-balance">Segmentos Estratégicos</h3>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-white/10 border border-white/10">
             {[
               { title: "Nutracêuticos", icon: <Apple />, items: ["Ômega-3", "NAC", "Vitaminas"] },
@@ -316,13 +302,13 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: TERRITÓRIO E COMPLEMENTARES */}
+      {/* SEÇÃO: TERRITÓRIO */}
       <section id="territorio" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           <div className="space-y-12">
             <h3 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tighter border-b-[8px] sm:border-b-[10px] border-black pb-6 inline-block">Área de Atuação</h3>
             <div className="space-y-16">
-               <div>
+                <div>
                   <h4 className="text-[12px] font-extrabold text-gray-300 uppercase tracking-widest mb-8 italic font-bold">Polos Regionais Prioritários</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {["Bauru", "Botucatu", "Marília", "Ourinhos", "Araraquara", "Ribeirão Preto", "São Carlos"].map((c, i) => (
@@ -332,14 +318,13 @@ const App = () => {
                       </div>
                     ))}
                   </div>
-               </div>
-               
-               <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black">
+                </div>
+                <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black">
                   <h4 className="text-[10px] font-black uppercase tracking-widest mb-4">Cidades Complementares</h4>
                   <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance">
                     Lençóis Paulista, Ibitinga, Matão, Lins, Tupã, Catanduva, Olímpia, Barretos, Araçatuba, Franca.
                   </p>
-               </div>
+                </div>
             </div>
           </div>
           <div className="bg-black text-white p-12 sm:p-16 shadow-2xl relative overflow-hidden flex flex-col justify-between rounded-sm">
@@ -358,20 +343,17 @@ const App = () => {
         </div>
       </section>
 
-      {/* FOOTER - REESTRUTURADO E CENTRALIZADO (ANTI-TONTURA) */}
+      {/* FOOTER */}
       <footer id="contato" className="relative bg-black text-white py-32 sm:py-40 px-6 overflow-hidden border-t border-white/10">
-        {/* Background Pattern - Ajustado para ser extremamente suave e desfocado para evitar cansaço visual */}
         <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center blur-[4px]">
            <SafeImage src={ASSETS.footerPattern} alt="Footer Background" className="w-full h-full object-cover" />
         </div>
-
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-16">
           <div className="space-y-8">
             <h4 className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase tracking-tighter text-white/90 text-balance leading-tight">Sua marca no interior paulista.</h4>
             <div className="w-20 h-1 bg-white/20 mx-auto"></div>
             <p className="text-gray-400 uppercase tracking-widest text-sm sm:text-base font-bold italic">Bauru – São Paulo | Brasil</p>
           </div>
-          
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-2">
@@ -420,7 +402,7 @@ const App = () => {
                     </form>
                   ) : isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
-                      <Loader2 className="animate-spin text-black" size={64} sm:size={80} />
+                      <Loader2 className="animate-spin text-black" size={64} />
                       <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4">Cruzando dados técnicos...</p>
                     </div>
                   ) : (
