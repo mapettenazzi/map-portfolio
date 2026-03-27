@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MapPin, 
   TrendingUp, 
@@ -14,12 +14,7 @@ import {
   Award, 
   ArrowRight,
   Briefcase,
-  Sparkles,
-  Loader2,
-  X,
-  Send,
   Building2,
-  MessageSquare,
   Zap,
   Camera,
   ImageIcon,
@@ -28,7 +23,9 @@ import {
   Map as MapIcon,
   Search,
   Handshake,
-  Mic2
+  BarChart3,
+  PieChart,
+  Navigation
 } from 'lucide-react';
 
 // Componente SafeImage para garantir o carregamento correto dos assets
@@ -60,20 +57,24 @@ const ASSETS = {
   logoCircle: "logo-circle.png"
 };
 
+// Base de Dados Estratégica para o Simulador (Inteligência Local)
+const REGIONAL_DATA = {
+  cities: ["Bauru", "Ribeirão Preto", "São Carlos", "Marília", "Araraquara", "Botucatu"],
+  segments: [
+    { id: "hosp", name: "Hospitalar", icon: <Stethoscope size={18}/>, score: 98, tips: "Alta demanda por dietas enterais e materiais cirúrgicos especializados." },
+    { id: "nutri", name: "Nutracêuticos", icon: <Apple size={18}/>, score: 92, tips: "Foco em farmácias de manipulação e redes premium." },
+    { id: "perf", name: "Performance", icon: <Target size={18}/>, score: 95, tips: "Público de alto ticket em box de CrossFit e academias boutique." },
+    { id: "sport", name: "Nutrição Esportiva", icon: <Dumbbell size={18}/>, score: 89, tips: "Mercado consolidado com foco em renovação de portfólio." },
+    { id: "snack", name: "Snacks Saudáveis", icon: <Activity size={18}/>, score: 85, tips: "Crescimento acelerado em empórios e varejo de conveniência." }
+  ]
+};
+
 const App = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [activeAiTab, setActiveAiTab] = useState('simulator'); 
-  const [productInfo, setProductInfo] = useState("");
-  const [pitchInput, setPitchInput] = useState("");
-  const [aiResponse, setAiResponse] = useState(null);
-  const [pitchResponse, setPitchResponse] = useState(null);
-  const [chatMessages, setChatMessages] = useState([
-    { role: 'ai', text: 'Olá! Sou o Assistente Estratégico da MAP. Como podemos expandir sua marca hoje? ✨' }
-  ]);
-  const [chatInput, setChatInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const chatEndRef = useRef(null);
+  const [selectedCity, setSelectedCity] = useState("Bauru");
+  const [selectedSegment, setSelectedSegment] = useState(REGIONAL_DATA.segments[0]);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -81,99 +82,13 @@ const App = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (isAiModalOpen) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chatMessages, isAiModalOpen]);
-
-  /**
-   * ENGINE IA - VERSÃO BLINDADA E PROTEGIDA
-   * A chave é gerida pelo ambiente de execução para evitar fugas de dados.
-   */
-  const callGemini = async (prompt, systemInstruction) => {
-    // Chave de API definida como string vazia; o ambiente fornece-a em tempo de execução
-    const apiKey = ""; 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-    
-    const payload = {
-      contents: [{ parts: [{ text: prompt }] }],
-      systemInstruction: { parts: [{ text: systemInstruction }] }
-    };
-
-    const fetchWithRetry = async (retries = 5, delay = 1000) => {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error?.message || "Erro na requisição");
-        }
-        
-        const result = await response.json();
-        return result.candidates?.[0]?.content?.parts?.[0]?.text;
-      } catch (error) {
-        if (retries > 0) {
-          await new Promise(resolve => setTimeout(resolve, delay * 2));
-          return fetchWithRetry(retries - 1, delay * 2);
-        }
-        throw error;
-      }
-    };
-
-    try {
-      const text = await fetchWithRetry();
-      return text || "A IA não conseguiu processar os dados. Tente reformular o seu texto.";
-    } catch (err) {
-      return `Erro de ligação ao motor de IA: ${err.message}.`;
-    }
-  };
-
-  const handleAiConsultancy = async (e) => {
-    e.preventDefault();
-    if (!productInfo.trim() || isLoading) return;
-    setIsLoading(true);
-    setAiResponse(null);
-    const res = await callGemini(
-      productInfo,
-      "Age como Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa este produto para o mercado do interior de São Paulo. Sê técnica, nítida e fornece insights sobre viabilidade e logística."
-    );
-    setAiResponse(res);
-    setIsLoading(false);
-  };
-
-  const handlePitchGeneration = async (e) => {
-    e.preventDefault();
-    if (!pitchInput.trim() || isLoading) return;
-    setIsLoading(true);
-    setPitchResponse(null);
-    const res = await callGemini(
-      pitchInput,
-      "Age como Mariá Pettenazzi. Cria um pitch de venda persuasivo e profissional para lojistas e hospitais. Foca na autoridade da MAP e nos benefícios técnicos do produto no interior de SP."
-    );
-    setPitchResponse(res);
-    setIsLoading(false);
-  };
-
-  const handleChat = async (e) => {
-    e.preventDefault();
-    if (!chatInput.trim() || isLoading) return;
-    const userMsg = { role: 'user', text: chatInput };
-    setChatMessages(prev => [...prev, userMsg]);
-    setChatInput("");
-    setIsLoading(true);
-    
-    const res = await callGemini(
-      chatInput, 
-      "És o Assistente Virtual da MAP Representações. Esclarece dúvidas sobre a nossa representação comercial, os nossos segmentos e a nossa vasta experiência no interior paulista."
-    );
-    
-    setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
-    setIsLoading(false);
+  const handleSimulate = () => {
+    setIsSimulating(true);
+    setShowResult(false);
+    setTimeout(() => {
+      setIsSimulating(false);
+      setShowResult(true);
+    }, 1200);
   };
 
   const handleEmailClick = () => {
@@ -186,52 +101,130 @@ const App = () => {
         {`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+          .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+          @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
         `}
       </style>
 
       {/* Navegação */}
       <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/98 backdrop-blur-lg py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-center">
-          <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center text-gray-500">
-            <a href="#atuacao" className="hover:text-black transition">Atuação</a>
-            <a href="#fundadora" className="hover:text-black transition">Fundadora</a>
+          <div className="flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center text-gray-500 mx-auto lg:mx-0">
+            <a href="#atuacao" className="hover:text-black transition hidden sm:inline">Atuação</a>
+            <a href="#fundadora" className="hover:text-black transition hidden sm:inline">Fundadora</a>
+            <a href="#simulador" className="text-black font-black sm:inline">Diagnóstico ✨</a>
             <a href="#segmentos" className="hover:text-black transition">Segmentos</a>
-            <button onClick={() => setIsAiModalOpen(true)} className="bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 transition-all shadow-xl flex items-center gap-2 tracking-[0.2em]">
-              IA SIMULADOR ✨
-            </button>
             <a href="#contato" className="hover:text-black transition">Contato</a>
-          </div>
-          <div className="lg:hidden flex w-full justify-end items-center">
-            <button onClick={() => setIsAiModalOpen(true)} className="p-3 bg-black text-white rounded-full shadow-2xl active:scale-95 transition-transform">
-              <Sparkles size={20} />
-            </button>
           </div>
         </div>
       </nav>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION - CENTRALIZADO E IMPOSTANTE */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 max-sm:opacity-[0.06] sm:opacity-[0.22] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
-          <SafeImage src={ASSETS.introPattern} alt="Padrão MAP" className="w-full h-full object-cover grayscale brightness-105" />
+        {/* Padrão de Fundo - Sutil para não brigar com a logo */}
+        <div className="absolute inset-0 max-sm:opacity-[0.04] sm:opacity-[0.15] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+          <SafeImage 
+            src={ASSETS.introPattern} 
+            alt="Padrão MAP" 
+            className="w-full h-full object-cover grayscale brightness-105" 
+          />
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
+        
+        {/* Máscara radial para focar na logo central */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_20%,_white_92%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
 
-        <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
-          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.60] sm:scale-100">
-            <div className="absolute inset-0 bg-white/90 blur-[100px] rounded-full scale-125 -z-10 hidden sm:block"></div>
-            <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
-            <SafeImage src={ASSETS.logoFullBlack} alt="MAP Representações" className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.04)]" />
+        <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center">
+          {/* Logo Principal - CENTRALIZADA NO MOBILE */}
+          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[85vw] sm:max-w-5xl mx-auto scale-[1.50] sm:scale-100">
+            {/* White Glow para limpeza visual */}
+            <div className="absolute inset-0 bg-white/95 blur-[100px] rounded-full scale-125 -z-10 hidden sm:block"></div>
+            <div className="absolute inset-0 bg-white/40 blur-[50px] rounded-full scale-110 -z-10 sm:hidden"></div>
+            
+            <SafeImage 
+              src={ASSETS.logoFullBlack} 
+              alt="MAP Representações" 
+              className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.02)]" 
+            />
           </div>
+          
           <div className="mt-40 sm:mt-24">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
+             <a href="#simulador" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12 text-black/10" />
              </a>
           </div>
         </div>
       </section>
 
+      {/* NOVO: SIMULADOR DE POTENCIAL REGIONAL (Substituindo a IA) */}
+      <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="text-center mb-16 space-y-6">
+            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block">Inteligência Estratégica</span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico de Potencial Regional</h2>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Mapeamento técnico instantâneo da sua marca no interior de São Paulo.</p>
+          </div>
+
+          <div className="bg-white p-8 sm:p-12 shadow-2xl rounded-sm border border-gray-100">
+            <div className="grid sm:grid-cols-2 gap-8 mb-10">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Polo Prioritário</label>
+                <select 
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  className="w-full p-5 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all appearance-none cursor-pointer"
+                >
+                  {REGIONAL_DATA.cities.map(city => <option key={city} value={city}>{city}</option>)}
+                </select>
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Segmento de Produto</label>
+                <select 
+                  onChange={(e) => setSelectedSegment(REGIONAL_DATA.segments.find(s => s.name === e.target.value))}
+                  className="w-full p-5 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all appearance-none cursor-pointer"
+                >
+                  {REGIONAL_DATA.segments.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <button 
+              onClick={handleSimulate}
+              disabled={isSimulating}
+              className="w-full bg-black text-white py-8 text-[11px] font-black uppercase tracking-[0.4em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4"
+            >
+              {isSimulating ? (
+                <><Loader2 className="animate-spin" /> PROCESSANDO MAPEAUMENTO...</>
+              ) : (
+                <><PieChart size={18} /> GERAR DIAGNÓSTICO ESTRATÉGICO</>
+              )}
+            </button>
+
+            {showResult && (
+              <div className="mt-12 pt-12 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="grid sm:grid-cols-3 gap-12 items-center">
+                  <div className="text-center sm:text-left space-y-2">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Score de Viabilidade</p>
+                    <div className="text-6xl font-black tracking-tighter text-black flex items-center justify-center sm:justify-start">
+                      {selectedSegment.score}<span className="text-lg opacity-20 ml-1">%</span>
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 bg-gray-50 p-6 sm:p-8 border-l-4 border-black italic">
+                    <p className="text-gray-500 font-semibold mb-2 flex items-center gap-2">
+                      <Lightbulb size={18} className="text-black" /> Dica da Mariá:
+                    </p>
+                    <p className="text-lg text-black font-bold leading-relaxed">
+                      "Para {selectedCity}, o segmento de {selectedSegment.name} tem altíssima penetração. {selectedSegment.tips}"
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* SEÇÃO: ATUAÇÃO */}
-      <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
+      <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
@@ -318,9 +311,9 @@ const App = () => {
             {[
               { title: "Nutracêuticos", icon: <Apple />, items: ["Ômega-3", "NAC", "Vitaminas"] },
               { title: "Nutrição Esportiva", icon: <Dumbbell />, items: ["Whey", "Creatina", "Aminoácidos"] },
-              { title: "Snacks Funcionais", icon: <Activity />, items: ["Barrinhas Proteicas", "Alimentos Proteicos", "Saudáveis"] },
-              { title: "Performance", icon: <Target />, items: ["Eletrólitos", "Endurance", "Acessórios de Endurance"] },
-              { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Equipamentos Médicos", "Materiais Cirúrgicos"] }
+              { title: "Snacks Funcionais", icon: <Activity />, items: ["Barrinhas Proteicas", "Saudáveis"] },
+              { title: "Performance", icon: <Target />, items: ["Eletrólitos", "Endurance", "Acessórios"] },
+              { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Equipamentos", "Materiais"] }
             ].map((s, i) => (
               <div key={i} className="bg-black p-12 hover:bg-white hover:text-black transition-all duration-700 group text-left">
                 <div className="mb-10 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -349,7 +342,7 @@ const App = () => {
                 <div>
                   <h4 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-8 italic">Polos Regionais Prioritários</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {["Bauru", "Botucatu", "Marília", "Ourinhos", "Araraquara", "Ribeirão Preto", "São Carlos"].map((c, i) => (
+                    {REGIONAL_DATA.cities.map((c, i) => (
                       <div key={i} className="py-4 border-b border-gray-100 text-base sm:text-lg font-bold uppercase tracking-widest flex items-center gap-4 group cursor-default text-balance text-black">
                         <span className="w-2 h-2 bg-black scale-0 group-hover:scale-100 transition-transform"></span>
                         {c}
@@ -406,126 +399,6 @@ const App = () => {
           </div>
         </div>
       </footer>
-
-      {/* BOTÃO CHAT FLUTUANTE */}
-      <button 
-        onClick={() => { setIsAiModalOpen(true); setActiveAiTab('chat'); }}
-        className="fixed bottom-10 right-10 z-[60] bg-black text-white p-6 sm:p-7 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-4 group"
-      >
-        <MessageSquare size={28} />
-        <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-widest hidden lg:inline-block w-0 group-hover:w-auto overflow-hidden transition-all duration-500 whitespace-nowrap font-black">CONSULTORIA ONLINE ✨</span>
-      </button>
-
-      {/* MODAL IA - Estabilidade Técnica Mobile */}
-      {isAiModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
-          <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setIsAiModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-5xl h-[85vh] sm:h-[80vh] flex flex-col shadow-2xl overflow-hidden rounded-sm transition-all">
-            <div className="flex border-b border-gray-100 bg-gray-50/50 text-center font-bold sticky top-0 z-20">
-              <button onClick={() => setActiveAiTab('simulator')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'simulator' ? 'bg-white text-black' : 'hover:bg-gray-50 opacity-40'}`}>Simulador ✨</button>
-              <button onClick={() => setActiveAiTab('pitch')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'pitch' ? 'bg-white text-black' : 'hover:bg-gray-50 opacity-40'}`}>Pitch ✨</button>
-              <button onClick={() => setActiveAiTab('chat')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'chat' ? 'bg-black text-white' : 'hover:bg-gray-50 opacity-40'}`}>Assistente ✨</button>
-              <button onClick={() => setIsAiModalOpen(false)} className="p-5 sm:p-8 hover:text-red-500 transition-colors"><X size={28} /></button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-6 sm:p-10 md:p-20 scroll-smooth">
-              {activeAiTab === 'simulator' && (
-                <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
-                  <div className="text-center space-y-6">
-                    <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Valide sua Marca no Interior</h4>
-                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
-                  </div>
-                  {!aiResponse && !isLoading ? (
-                    <form onSubmit={handleAiConsultancy} className="space-y-10 sm:space-y-12">
-                      <textarea 
-                        required 
-                        value={productInfo} 
-                        onChange={e => setProductInfo(e.target.value)} 
-                        placeholder="Descreva o seu produto ou portfólio para análise técnica..." 
-                        className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-bold resize-none" 
-                      />
-                      <button type="submit" disabled={isLoading} className="w-full bg-black text-white py-8 sm:py-10 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.6em] hover:bg-gray-800 transition-all shadow-2xl active:scale-95 disabled:opacity-50">
-                        {isLoading ? "PROCESSANDO..." : "PROCESSAR ANÁLISE"}
-                      </button>
-                    </form>
-                  ) : isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
-                      <Loader2 className="animate-spin text-black" size={64} sm:size={80} />
-                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4 text-gray-900">Consultando inteligência comercial...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-12 sm:space-y-16 animate-in zoom-in-95 text-balance">
-                       <div className="bg-gray-50 p-8 sm:p-14 border-l-[10px] sm:border-l-[12px] border-black text-lg sm:text-xl leading-relaxed whitespace-pre-wrap italic shadow-inner text-gray-900 font-bold">
-                        {aiResponse}
-                       </div>
-                       <button onClick={() => setAiResponse(null)} className="w-full border-4 border-black text-black py-8 text-[11px] sm:text-[12px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all active:scale-95">Nova Simulação</button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeAiTab === 'pitch' && (
-                <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
-                  <div className="text-center space-y-6">
-                    <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Gerador de Pitch de Venda</h4>
-                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Argumentos que convertem no Interior de SP ✨</p>
-                  </div>
-                  {!pitchResponse && !isLoading ? (
-                    <form onSubmit={handlePitchGeneration} className="space-y-10 sm:space-y-12">
-                      <textarea 
-                        required 
-                        value={pitchInput} 
-                        onChange={e => setPitchInput(e.target.value)} 
-                        placeholder="Qual produto quer vender? (Ex: Proteína Vegana, Monitor Cardíaco...)" 
-                        className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-bold resize-none" 
-                      />
-                      <button type="submit" disabled={isLoading} className="w-full bg-black text-white py-8 sm:py-10 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.6em] hover:bg-gray-800 transition-all shadow-2xl active:scale-95 disabled:opacity-50">
-                        {isLoading ? "CRIANDO PITCH..." : "GERAR ARGUMENTO ✨"}
-                      </button>
-                    </form>
-                  ) : isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
-                      <Mic2 className="animate-bounce text-black" size={64} sm:size={80} />
-                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4 text-gray-900">A criar estratégia de venda...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-12 sm:space-y-16 animate-in zoom-in-95 text-balance">
-                       <div className="bg-gray-50 p-8 sm:p-14 border-l-[10px] sm:border-l-[12px] border-black text-lg sm:text-xl leading-relaxed whitespace-pre-wrap italic shadow-inner text-gray-900 font-bold">
-                        {pitchResponse}
-                       </div>
-                       <button onClick={() => setPitchResponse(null)} className="w-full border-4 border-black text-black py-8 text-[11px] sm:text-[12px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all active:scale-95">Criar Outro Pitch</button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeAiTab === 'chat' && (
-                <div className="h-full flex flex-col">
-                  <div className="flex-1 overflow-y-auto space-y-8 sm:space-y-10 mb-10 pr-2 custom-scrollbar">
-                    {chatMessages.map((msg, i) => (
-                      <div key={i} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
-                        <div className={`max-w-[90%] sm:max-w-[85%] p-6 sm:p-10 text-lg sm:text-xl font-bold leading-relaxed shadow-sm ${msg.role === 'ai' ? 'bg-gray-50 border-l-[10px] border-black text-gray-900' : 'bg-black text-white'}`}>{msg.text}</div>
-                      </div>
-                    ))}
-                    <div ref={chatEndRef} />
-                  </div>
-                  <form onSubmit={handleChat} className="flex gap-4 sm:gap-8 border-t border-gray-100 pt-10 sticky bottom-0 bg-white pb-2">
-                    <input 
-                      value={chatInput} 
-                      onChange={e => setChatInput(e.target.value)} 
-                      placeholder="Dúvida técnica ou comercial..." 
-                      className="flex-1 bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 outline-none focus:border-black text-lg sm:text-xl font-bold" 
-                    />
-                    <button type="submit" disabled={isLoading || !chatInput.trim()} className="bg-black text-white px-8 sm:px-16 p-6 sm:p-10 hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center active:scale-95 disabled:opacity-50">
-                      {isLoading ? <Loader2 className="animate-spin" size={32} /> : <Send size={32} />}
-                    </button>
-                  </form>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
