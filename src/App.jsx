@@ -35,7 +35,8 @@ import {
   UserCheck,
   PackageSearch,
   ShieldCheck,
-  Target as TargetIcon
+  Target as TargetIcon,
+  CheckCircle
 } from 'lucide-react';
 
 // Componente SafeImage com fallback para manter a integridade visual
@@ -96,6 +97,7 @@ const SEGMENTS = [
     description: "Análise 360º: Este polo apresenta densidade crítica de leitos e centros de referência. A estratégia MAP foca na homologação de alta complexidade.",
     marketing: "Marketing de Valor: Focamos na venda consultiva baseada em desfechos clínicos e redução de custos por procedimento (Value-Based Healthcare).",
     trade: "Trade Marketing Intra-Hospitalar: Ativações técnicas diretamente com compradores e enfermeiros-chefes para garantir padronização.",
+    sellIn: "Contratos Estratégicos: Negociação baseada em segurança de stock e previsibilidade de demanda para centros cirúrgicos.",
     supply: "Supply Chain Integrado: Logística 'Just-in-Time' da MAP para eliminar rupturas em cirurgias eletivas e reduzir stocks excedentes.",
     expansion: "Abertura de Novos PDVs: Foco em centros oncológicos, clínicas de diagnóstico e hospitais privados de alto padrão."
   },
@@ -108,6 +110,7 @@ const SEGMENTS = [
     description: "Análise 360º: Perfil de consumo focado em longevidade e prevenção. Mercado classe A/B com altíssima aderência a produtos premium.",
     marketing: "Marketing de Prescrição: Fortalecimento da marca junto a médicos e nutricionistas para gerar demanda 'Pull' no PDV.",
     trade: "Gestão de Share of Shelf: Conquista de frentes de gôndola e displays educativos em farmácias premium e lojas conceito.",
+    sellIn: "Abastecimento Premium: Campanhas de sell-in focadas em mix completo para evitar a perda de venda por falta de variedade.",
     supply: "Controle de Shelf-Life: Gestão rigorosa de lotes e validade para garantir frescura e integridade nutricional no ponto de venda.",
     expansion: "Abertura de Novos PDVs: Mapeamento de farmácias independentes de alto faturamento e empórios naturais gourmet."
   },
@@ -120,6 +123,7 @@ const SEGMENTS = [
     description: "Análise 360º: Lifestyle de endurance consolidado. Público fiel que prioriza tecnologia e autoridade técnica da marca.",
     marketing: "Brand Community: Criação de ecossistemas de fidelidade através de assessorias desportivas e boxes de CrossFit locais.",
     trade: "Ativação Experimental: Sampling em eventos desportivos regionais (Race-Day) para conversão imediata de novos usuários.",
+    sellIn: "Lançamentos Exclusivos: Estratégia de abastecimento prioritário para lojas de nicho que influenciam o mercado local.",
     supply: "Logística de Lançamentos: Distribuição coordenada para que os novos produtos cheguem simultaneamente aos principais polos.",
     expansion: "Abertura de Novos PDVs: Centros de treinamento boutique, estúdios de performance e lojas especializadas em triathlon/ciclismo."
   },
@@ -132,6 +136,7 @@ const SEGMENTS = [
     description: "Análise 360º: Mercado maduro e altamente competitivo. A vitória comercial reside no relacionamento estreito com o lojista.",
     marketing: "Incentivo de Vendas: Campanhas de fidelização de balconistas (Sell-out boosters) para conversão de marca no momento da compra.",
     trade: "Visual Merchandising: Exposição agressiva em gôndola e uso de materiais de PDV que comuniquem custo-benefício técnico.",
+    sellIn: "Campanhas de Giro: Incentivos de volume para lojistas focados em alta rotatividade de stock e market share.",
     supply: "Cross-docking Regional: Agilidade extrema na reposição para evitar a perda de venda para a concorrência direta.",
     expansion: "Abertura de Novos PDVs: Expansão para grandes redes de ginásios e lojas de suplementação de bairro com alto giro."
   },
@@ -144,6 +149,7 @@ const SEGMENTS = [
     description: "Análise 360º: Comportamento 'On-the-go' dominante. O interior paulista é um hub de consumo em trânsito e conveniência.",
     marketing: "Neurovendas: Estratégias de embalagem e exposição que capturam a atenção visual em milissegundos no checkout.",
     trade: "Category Management: Organização do mix de produtos para que a alternativa saudável seja a escolha óbvia em cafetarias e conveniência.",
+    sellIn: "Reposição Ágil: Foco em capilaridade e frequência de entrega para canais de pequeno e médio porte.",
     supply: "Logística de Alta Frequência: Reposição contínua para suportar o giro diário elevado característico desta vertical.",
     expansion: "Abertura de Novos PDVs: Cafetarias corporativas, redes de conveniência de postos premium e vending machines técnicas."
   }
@@ -168,7 +174,7 @@ const App = () => {
     setTimeout(() => {
       setIsSimulating(false);
       setShowResult(true);
-    }, 1500);
+    }, 1200);
   };
 
   const currentSegment = SEGMENTS.find(s => s.id === segmentId) || SEGMENTS[0];
@@ -200,24 +206,27 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - LOGO IMPACTANTE E CENTRALIZADA NO MOBILE */}
+      {/* HERO SECTION - CENTRALIZAÇÃO DESKTOP E IMPACTO MOBILE */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
-        <div className="absolute inset-0 max-sm:opacity-[0.02] sm:opacity-[0.06] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - Visibilidade corrigida para Desktop */}
+        <div className="absolute inset-0 max-sm:opacity-[0.02] sm:opacity-[0.12] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_95%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
+        {/* Máscara radial para focar na logo central */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)] sm:bg-[radial-gradient(circle,_transparent_45%,_white_92%)]"></div>
 
         <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
-          {/* Logo Principal - Ajuste Mobile Magnus: Super Larga (w-[130%]) perfeitamente centralizada */}
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 w-[130%] ml-[-15%] sm:ml-0 sm:w-full max-w-5xl mx-auto">
-            <div className="absolute inset-0 bg-white/95 blur-[120px] rounded-full scale-125 -z-10 hidden sm:block"></div>
+          {/* Logo Principal - Impacto Máximo Mobile (w-[130%]) e Centralização Perfeita */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 max-sm:w-[130%] max-sm:ml-[-15%] sm:w-full sm:max-w-4xl mx-auto flex items-center justify-center">
+            {/* White Glow para separação visual corrigido */}
+            <div className="absolute inset-0 bg-white/60 blur-[140px] rounded-full scale-150 -z-10 hidden sm:block"></div>
             <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
             
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain" 
+              className="w-full h-auto object-contain mx-auto" 
             />
           </div>
           
@@ -229,20 +238,20 @@ const App = () => {
         </div>
       </section>
 
-      {/* SIMULADOR DE POTENCIAL - PARECER COMERCIAL COMPLETO 360º */}
+      {/* SIMULADOR DE POTENCIAL - PARECER COMERCIAL COMPLETO */}
       <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4 px-4">
             <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Inteligência de Mercado & Expansão</span>
             <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico Estratégico</h2>
-            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação multicanal baseada em PIB regional e indicadores reais de consumo.</p>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação baseada em indicadores reais de consumo do Interior Paulista.</p>
           </div>
 
           <div className="bg-white p-6 sm:p-14 shadow-2xl rounded-sm border border-gray-100">
             <div className="grid sm:grid-cols-2 gap-8 mb-10">
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <Globe size={12}/> Polo Regional de Atuação
+                  <Globe size={12}/> Pólo de Atuação
                 </label>
                 <select 
                   value={city}
@@ -254,7 +263,7 @@ const App = () => {
               </div>
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <ShoppingBag size={12}/> Vertical de Negócio
+                  <ShoppingBag size={12}/> Vertical de Produto
                 </label>
                 <select 
                   value={segmentId}
@@ -272,7 +281,7 @@ const App = () => {
               className="w-full bg-black text-white py-10 text-[11px] font-black uppercase tracking-[0.5em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-2xl"
             >
               {isSimulating ? (
-                <><Loader2 className="animate-spin" size={20} /> COMPILANDO ESTRATÉGIA REGIONAL...</>
+                <><Loader2 className="animate-spin" size={20} /> COMPILANDO PARECER COMERCIAL...</>
               ) : (
                 <><BarChart size={20} /> GERAR PARECER COMERCIAL ✨</>
               )}
@@ -296,13 +305,13 @@ const App = () => {
                   
                   <div className="lg:col-span-3 space-y-10">
                     <div className="bg-gray-50 p-8 sm:p-12 border-l-8 border-black shadow-inner space-y-12">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-8">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-gray-200 pb-8">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-black text-white flex items-center justify-center shadow-2xl">
-                            <ShieldCheck size={32} strokeWidth={1.5} />
+                          <div className="w-16 h-16 bg-black text-white flex items-center justify-center shadow-2xl">
+                            <ShieldCheck size={36} strokeWidth={1.2} />
                           </div>
                           <div>
-                            <h4 className="text-[16px] font-black uppercase tracking-[0.3em]">Parecer Comercial</h4>
+                            <h4 className="text-[18px] font-black uppercase tracking-[0.3em]">Parecer Comercial</h4>
                             <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest mt-1">MAP Representações & Consultoria</p>
                           </div>
                         </div>
@@ -314,7 +323,7 @@ const App = () => {
                       <div className="space-y-10 text-gray-800">
                         <div className="space-y-4">
                            <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                              <MessageSquare size={16} className="text-black/30" /> Resumo Estratégico - Polo {city}
+                              <MessageSquare size={16} className="text-black/30" /> Resumo Estratégico - Pólo {city}
                            </h5>
                            <p className="text-lg leading-relaxed font-medium text-justify">
                               {currentSegment.description}
@@ -332,7 +341,7 @@ const App = () => {
                           </div>
                           <div className="space-y-4">
                              <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                                <ShoppingBag size={16} className="text-black" /> Trade & Sell-out
+                                <ShoppingBag size={16} className="text-black" /> Trade Marketing & Sell-out
                              </h5>
                              <p className="text-base leading-relaxed text-gray-700 font-medium italic border-l-2 border-gray-300 pl-6 text-justify">
                                 "{currentSegment.trade}"
@@ -359,13 +368,18 @@ const App = () => {
                           </div>
                         </div>
 
-                        <div className="bg-black text-white p-8 space-y-4 shadow-2xl">
-                           <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
-                              <TargetIcon size={16} /> Plano de Expansão de PDV
-                           </h5>
-                           <p className="text-lg leading-relaxed font-bold tracking-tight">
-                              {currentSegment.expansion}
-                           </p>
+                        <div className="bg-black text-white p-8 space-y-4 shadow-2xl relative overflow-hidden">
+                           <div className="relative z-10">
+                              <h5 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
+                                 <TargetIcon size={16} /> Abertura e Expansão de Novos PDVs
+                              </h5>
+                              <p className="text-lg leading-relaxed font-bold tracking-tight mt-2">
+                                 {currentSegment.expansion}
+                              </p>
+                           </div>
+                           <div className="absolute -right-4 -bottom-4 opacity-10">
+                              <TargetIcon size={120} />
+                           </div>
                         </div>
                       </div>
 
@@ -399,7 +413,7 @@ const App = () => {
             
             <div className="grid gap-10">
               {[
-                { title: "Presença em campo", desc: "Visitação ativa e relacionamento direto em cada polo regional estratégico.", icon: <MapPin /> },
+                { title: "Presença em campo", desc: "Visitação ativa e relacionamento direto em cada pólo regional estratégico.", icon: <MapPin /> },
                 { title: "Inteligência comercial", desc: "Mapeamento estruturado e desenvolvimento de canais de alta performance.", icon: <Search /> },
                 { title: "Relacionamento técnico", desc: "Conexão de autoridade com profissionais de saúde e decisores do setor.", icon: <Handshake /> }
               ].map((p, i) => (
