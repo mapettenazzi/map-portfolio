@@ -29,14 +29,15 @@ import {
   ShoppingBag,
   Globe,
   BarChart,
-  Truck,
   MessageSquare,
   LayoutDashboard,
   UserCheck,
   PackageSearch,
   ShieldCheck,
   Target as TargetIcon,
-  CheckCircle
+  ShoppingCart,
+  Store,
+  BadgePercent
 } from 'lucide-react';
 
 // Componente SafeImage para garantir a integridade visual
@@ -68,31 +69,31 @@ const ASSETS = {
   logoCircle: "logo-circle.png"
 };
 
-// Inteligência Territorial: PIB, População e Vocação por Pólo
-const CITY_INTEL = {
-  "Campinas": { pib: "R$ 72 bi", pop: "1.2M", type: "Tech Hub", focus: "Inovação e Logística Global", drive: "Alta tecnologia e consumo de elite tech." },
-  "Ribeirão Preto": { pib: "R$ 38 bi", pop: "720k", type: "Agro/Saúde Hub", focus: "Agronegócio e Medicina de Alta Complexidade", drive: "Elite do agronegócio e rede hospitalar referência." },
-  "Sorocaba": { pib: "R$ 35 bi", pop: "700k", type: "Industrial Hub", focus: "Manufatura e Proximidade com Capital", drive: "Trabalhadores industriais e expansão de serviços premium." },
-  "São José do Rio Preto": { pib: "R$ 22 bi", pop: "480k", type: "Service/Saúde Hub", focus: "Referência Regional Noroeste", drive: "Forte comércio de rua e clínicas especializadas." },
-  "Bauru": { pib: "R$ 18 bi", pop: "380k", type: "Logistic/Edu Hub", focus: "Entroncamento Ferro-Rodoviário", drive: "Serviços centralizados e grande fluxo estudantil/logístico." },
-  "Piracicaba": { pib: "R$ 25 bi", pop: "410k", type: "Bioenergy Hub", focus: "Agroindústria Sucroalcooleira", drive: "Indústria pesada e forte poder de compra agroindustrial." },
-  "São Carlos": { pib: "R$ 15 bi", pop: "260k", type: "Knowledge Hub", focus: "Tecnologia e Universidades", drive: "Consumo técnico-científico e alto nível educacional." },
-  "Jundiaí": { pib: "R$ 55 bi", pop: "430k", type: "Logistic Hub", focus: "Pulmão de Distribuição de SP", drive: "Logística ágil e alto PIB per capita industrial." },
-  "Marília": { pib: "R$ 16 bi", pop: "240k", type: "Food Hub", focus: "Indústria Alimentar Nacional", drive: "Cluster de alimentos e varejo regional consolidado." },
-  "Araraquara": { pib: "R$ 14 bi", pop: "240k", type: "Agro-Ind Hub", focus: "Citricultura e Serviços", drive: "Economia estável com foco em processamento agro." },
-  "Botucatu": { pib: "R$ 10 bi", pop: "150k", type: "Bio Hub", focus: "Saúde e Biotecnologia", drive: "Unesp como motor de validação científica e saúde." },
-  "Presidente Prudente": { pib: "R$ 11 bi", pop: "230k", type: "Regional Hub", focus: "Administração do Oeste Paulista", drive: "Varejo de pólo polarizador de 40+ municípios." },
-  "Araçatuba": { pib: "R$ 12 bi", pop: "200k", type: "Energy Hub", focus: "Agroenergia e Pecuária", drive: "Crescimento de serviços e infraestrutura energética." },
-  "Franca": { pib: "R$ 13 bi", pop: "360k", type: "Industry Hub", focus: "Pólo Calçadista", drive: "Tradição industrial com expansão para novos nichos." },
-  "Limeira": { pib: "R$ 17 bi", pop: "310k", type: "Industry Hub", focus: "Jóias e Metalurgia", drive: "Indústria dinâmica com alto giro de varejo alimentar." }
+// Inteligência Comercial: Perfil de Vendas por Pólo
+const CITY_COMMERCE = {
+  "Campinas": { buyerProfile: "Executivo/Corporativo", marketForce: "Volume Massivo", strategy: "venda de escala em grandes redes e hubs de conveniência." },
+  "Ribeirão Preto": { buyerProfile: "Elite do Agronegócio", marketForce: "Alto Valor Agregado", strategy: "abordagem premium em clínicas de luxo e varejo de alto ticket." },
+  "Sorocaba": { buyerProfile: "Industrial/Operário", marketForce: "Giro Rápido", strategy: "foco em pontos de venda de alta rotatividade e varejo alimentar." },
+  "São José do Rio Preto": { buyerProfile: "Regional Consolidado", marketForce: "Fidelização", strategy: "relacionamento estreito com lojistas tradicionais e redes independentes." },
+  "Bauru": { buyerProfile: "Misto/Universitário", marketForce: "Capilaridade Central", strategy: "estratégia multicanal aproveitando a centralidade geográfica." },
+  "Piracicaba": { buyerProfile: "Agroindustrial", marketForce: "Estabilidade", strategy: "vendas focadas em cooperativas e varejo técnico especializado." },
+  "São Carlos": { buyerProfile: "Técnico/Académico", marketForce: "Nicho Especializado", strategy: "argumentação técnica para um público que exige evidência de resultados." },
+  "Jundiaí": { buyerProfile: "Logístico/Premium", marketForce: "Agilidade de Reposição", strategy: "foco em redes de farmácias e empórios de proximidade." },
+  "Marília": { buyerProfile: "Indústria Alimentar", marketForce: "Tradição", strategy: "penetração em canais alimentares e varejo de saudáveis consolidado." },
+  "Araraquara": { buyerProfile: "Consumo Estável", marketForce: "Presença de Marca", strategy: "visitação constante para manter o share of shelf no varejo de rua." },
+  "Botucatu": { buyerProfile: "Saúde/Científico", marketForce: "Autoridade Técnica", strategy: "venda consultiva pesada junto a prescritores e hospitais escola." },
+  "Presidente Prudente": { buyerProfile: "Polo Regional", marketForce: "Venda de Influência", strategy: "domínio do canal farma e suplementação no extremo oeste." },
+  "Araçatuba": { buyerProfile: "Agro/Serviços", marketForce: "Expansão Recente", strategy: "abertura de novos PDVs em zonas de crescimento comercial." },
+  "Franca": { buyerProfile: "Industrial Tradicional", marketForce: "Preço/Volume", strategy: "campanhas de sell-out agressivas em lojas de grande fluxo." },
+  "Limeira": { buyerProfile: "Dinâmico Industrial", marketForce: "Oportunidade", strategy: "foco em conveniência e mix de produtos para o dia-a-dia." }
 };
 
 const SEGMENTS = [
-  { id: "hosp", name: "Hospitalar", baseScore: 94, slogan: "Precisão cirúrgica no Supply Chain." },
-  { id: "suple", name: "Suplementação", baseScore: 91, slogan: "Nutrição científica, venda técnica." },
-  { id: "perf", name: "Performance", baseScore: 88, slogan: "Alta performance no PDV e no Treino." },
-  { id: "esporte", name: "Nutrição Esportiva", baseScore: 85, slogan: "Dominando o giro do varejo fitness." },
-  { id: "alimentos", name: "Alimentos", baseScore: 89, slogan: "Sabor funcional, giro constante." }
+  { id: "hosp", name: "Hospitalar", baseScore: 95, slogan: "Abertura de portas na alta complexidade." },
+  { id: "suple", name: "Suplementação", baseScore: 92, slogan: "Gerando demanda no balcão da farmácia." },
+  { id: "perf", name: "Performance", baseScore: 89, slogan: "Venda de valor para o público endurance." },
+  { id: "esporte", name: "Nutrição Esportiva", baseScore: 86, slogan: "Dominando o giro das lojas de suplemento." },
+  { id: "alimentos", name: "Alimentos", baseScore: 90, slogan: "Saudáveis no topo do faturamento." }
 ];
 
 const App = () => {
@@ -118,53 +119,35 @@ const App = () => {
   };
 
   const currentSegment = SEGMENTS.find(s => s.id === segmentId) || SEGMENTS[0];
-  const intel = CITY_INTEL[city] || CITY_INTEL["Campinas"];
+  const commerce = CITY_COMMERCE[city] || CITY_COMMERCE["Campinas"];
 
-  // Motor de Inteligência Estratégica (Cruzamento de Dados Real)
-  const generateDiagnosis = () => {
-    const cityName = city;
-    const segId = currentSegment.id;
-    const isTech = intel.type.includes("Tech");
-    const isAgro = intel.type.includes("Agro");
-    const isLogistic = intel.type.includes("Logistic");
+  // Motor de Inteligência de Vendas (Totalmente Personalizado)
+  const generateSalesDiagnosis = () => {
+    const seg = currentSegment.name;
+    const cty = city;
 
-    let analysis = "";
     let sellIn = "";
     let sellOut = "";
     let expansion = "";
 
-    // Lógica Dinâmica baseada no Segmento + Perfil da Cidade
-    if (segId === "hosp") {
-      analysis = `O pólo de ${cityName} (${intel.pib} PIB) possui uma infraestrutura de saúde de ${intel.focus}. Para o setor Hospitalar, isto representa uma viabilidade crítica em dispositivos de alta tecnologia.`;
-      sellIn = isTech ? "Contratos via Supply Chain digitalizados, focando em redução de lead-time para centros cirúrgicos robotizados." : "Foco em contratos de volume para hospitais filantrópicos e redes regionais, priorizando segurança de stock centralizado.";
-      sellOut = "Venda técnica consultiva intra-hospitalar. Treinamento de equipas clínicas para reduzir a curva de aprendizagem de novos dispositivos.";
-      expansion = `Abertura de ${isTech ? '12 a 15' : '5 a 8'} novos canais em clínicas de especialidades e hospitais privados que polarizam o consumo de ${cityName}.`;
-    } else if (segId === "suple") {
-      analysis = `Com um PIB de ${intel.pib}, ${cityName} apresenta um perfil de consumo ${intel.drive}. A vertical de Suplementação encontra aqui um shopper que valoriza bioidenticidade e performance.`;
-      sellIn = isAgro ? "Mix focado em longevidade e prevenção para a elite agro regional. Negociação via 'Premium Placement' em farmácias independentes de luxo." : "Mix focado em dinamismo e bem-estar para o público executivo/tech. Sell-in focado em redes de farmácias com alto tráfego.";
-      sellOut = "Marketing de prescrição via KOLs regionais. Ativação de Trade através de materiais educativos clean-label que geram autoridade no PDV.";
-      expansion = `Mapeamento e ativação de ${isAgro ? '20+' : '10 a 15'} novos PDVs entre empórios gourmet e redes de farmácias boutique em ${cityName}.`;
-    } else if (segId === "perf") {
-      analysis = `O lifestyle de performance em ${cityName} é tracionado pela vocação ${intel.type}. O potencial para endurance e acessórios é alimentado pelo perfil ${intel.consumer}.`;
-      sellIn = "Seleção rigorosa de portfólio high-ticket. Abastecimento estratégico pré-sazonalidade de eventos desportivos locais.";
-      sellOut = "Estratégia de Brand Community. Ativação experimental em assessorias de triathlon e boxes de CrossFit referência em cada bairro estratégico.";
-      expansion = `Foco na abertura de estúdios boutique e lojas especializadas. Expectativa de penetração em ${isLogistic ? '100%' : '85%'} dos canais especializados do pólo.`;
-    } else if (segId === "esporte") {
-      analysis = `Mercado consolidado em ${cityName} com densidade populacional ${intel.density}. A nutrição desportiva tradicional exige agilidade comercial e presença física constante da MAP.`;
-      sellIn = "Campanhas de giro agressivas (Sell-in boosters). Foco na ocupação de gôndola e visibilidade primária face à concorrência mass-market.";
-      sellOut = "Incentivos para balconistas e ações de sampling direto. Comunicação focada no custo-benefício técnico e eficácia de curto prazo.";
-      expansion = "Capilarização em grandes redes de ginásios e varejo físico de suplementação em bairros de classe média e média-alta.";
-    } else { // Alimentos
-      analysis = `A vertical de Alimentos em ${cityName} beneficia do perfil ${intel.focus}. Sendo um ${intel.type}, o giro de conveniência saudável é acelerado pelo comportamento on-the-go.`;
-      sellIn = "Logística Just-in-Time para perecíveis e snacks. Entrada em redes de conveniência premium e cafetarias corporativas de alto padrão.";
-      sellOut = "Visual Merchandising focado em Hot Zones (checkout). Aplicação de neurovendas na exposição para capturar a compra por impulso em segundos.";
-      expansion = "Abertura massiva em redes de postos, cafetarias e áreas de lazer corporativo nas principais zonas industriais/comerciais.";
+    if (segmentId === "hosp") {
+      sellIn = `Negociação de contratos de exclusividade com os compradores de hospitais de ${cty}, focando no perfil ${commerce.buyerProfile}.`;
+      sellOut = `Visitação técnica para garantir que o seu produto seja a primeira escolha dos médicos especialistas da região.`;
+      expansion = `Abertura de ${commerce.marketForce === "Volume Massivo" ? '15+' : '6 a 8'} novos hospitais e clínicas de alto padrão neste pólo.`;
+    } else if (segmentId === "suple" || segmentId === "esporte") {
+      sellIn = `Introdução de mix completo nas redes de farmácias e lojas de ${cty}, garantindo margens competitivas para o lojista.`;
+      sellOut = `Treinamento agressivo dos balconistas para que saibam vender os benefícios técnicos da sua marca no momento do 'fecho'.`;
+      expansion = `Mapeamento de PDVs em bairros de classe A/B de ${cty} para inserção imediata de gôndolas personalizadas.`;
+    } else {
+      sellIn = `Entrada estratégica em cafetarias, empórios e conveniências, aproveitando o ${commerce.marketForce} de ${cty}.`;
+      sellOut = `Ações de degustação e visibilidade no checkout para estimular a compra por impulso baseada no perfil ${commerce.buyerProfile}.`;
+      expansion = `Expansão da rede de distribuição para cobrir 100% dos pontos de venda premium de ${cty}.`;
     }
 
-    return { analysis, sellIn, sellOut, expansion, score: currentSegment.baseScore + (intel.pib.includes("72") ? 5 : 2) };
+    return { sellIn, sellOut, expansion, score: currentSegment.baseScore + (city === "Campinas" || city === "Ribeirão Preto" ? 4 : 1) };
   };
 
-  const diagnosis = generateDiagnosis();
+  const diag = generateSalesDiagnosis();
 
   const handleEmailClick = () => {
     window.location.href = "mailto:maaprroyo@outlook.com?subject=Contato Estratégico - MAP Representações";
@@ -176,7 +159,6 @@ const App = () => {
         {`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-          .diag-text { line-height: 1.4; letter-spacing: -0.01em; }
         `}
       </style>
 
@@ -186,28 +168,27 @@ const App = () => {
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.4em] items-center text-gray-500 mx-auto lg:mx-0">
             <a href="#atuacao" className="hover:text-black transition hidden sm:inline">Atuação</a>
             <a href="#fundadora" className="hover:text-black transition hidden sm:inline">Fundadora</a>
-            <a href="#simulador" className="text-black font-black flex items-center gap-1">Inteligência <span className="animate-pulse">✨</span></a>
+            <a href="#simulador" className="text-black font-black flex items-center gap-1 border-b border-black">Vendas <span className="animate-pulse">✨</span></a>
             <a href="#segmentos" className="hover:text-black transition">Segmentos</a>
             <a href="#contato" className="hover:text-black transition">Contato</a>
           </div>
         </div>
       </nav>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION - LIMPEZA VISUAL CORRIGIDA */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
-        {/* Padrão de Fundo - Opacidade 20% e Escala 125% - Visibilidade Corrigida para Desktop */}
+        {/* Padrão de Fundo - Visibilidade Periférica */}
         <div className="absolute inset-0 opacity-[0.20] scale-[1.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
-        {/* Máscara radial ampliada para Desktop para limpar a zona da logo */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)] sm:bg-[radial-gradient(circle,_transparent_50%,_white_96%)]"></div>
+        {/* Máscara Radial - Limpa o centro para a logo reinar sozinha */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_white_25%,_white_45%,_transparent_100%)] sm:bg-[radial-gradient(circle,_white_35%,_white_55%,_transparent_100%)]"></div>
 
         <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 max-sm:w-[130%] max-sm:ml-[-15%] sm:w-full sm:max-w-4xl mx-auto flex items-center justify-center">
-            {/* Glow de separação para evitar confusão visual na Web */}
-            <div className="absolute inset-0 bg-white/70 blur-[150px] rounded-full scale-150 -z-10 hidden sm:block"></div>
-            <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
+            {/* White Glow para reforçar a limpeza visual */}
+            <div className="absolute inset-0 bg-white blur-[80px] rounded-full scale-150 -z-10 hidden sm:block"></div>
             
             <SafeImage src={ASSETS.logoFullBlack} alt="MAP Representações" className="w-full h-auto object-contain mx-auto" />
           </div>
@@ -220,27 +201,27 @@ const App = () => {
         </div>
       </section>
 
-      {/* SIMULADOR DE POTENCIAL - PERSONALIZAÇÃO TOTAL 360º */}
+      {/* SIMULADOR COMERCIAL - FOCO EM VENDAS E PDV */}
       <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-2 px-4">
-            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Business Intelligence & Expansão Territorial</span>
-            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico Estratégico</h2>
-            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação multicanal baseada em indicadores macro-económicos reais do Pólo Paulista.</p>
+            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Inteligência Comercial & Abertura de Mercado</span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico de Vendas</h2>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação técnica baseada no potencial comercial real do Interior de São Paulo.</p>
           </div>
 
           <div className="bg-white p-6 sm:p-14 shadow-2xl rounded-sm border border-gray-100">
             <div className="grid sm:grid-cols-2 gap-6 mb-8">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <Globe size={12}/> Pólo de Atuação Selecionado
+                  <Globe size={12}/> Pólo Regional
                 </label>
                 <select 
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   className="w-full p-4 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none appearance-none hover:bg-gray-100/50"
                 >
-                  {Object.keys(CITY_INTEL).map(c => <option key={c} value={c}>{c}</option>)}
+                  {Object.keys(CITY_COMMERCE).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
@@ -263,25 +244,25 @@ const App = () => {
               className="w-full bg-black text-white py-8 text-[11px] font-black uppercase tracking-[0.5em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-2xl"
             >
               {isSimulating ? (
-                <><Loader2 className="animate-spin" size={20} /> COMPILANDO PARECER TÉCNICO...</>
+                <><Loader2 className="animate-spin" size={20} /> ANALISANDO CANAIS DE VENDA...</>
               ) : (
                 <><BarChart size={20} /> GERAR PARECER COMERCIAL ✨</>
               )}
             </button>
 
             {showResult && (
-              <div className="mt-10 pt-10 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-6 duration-700">
+              <div className="mt-10 pt-10 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="grid lg:grid-cols-4 gap-10 items-start">
                   <div className="lg:col-span-1 space-y-6 text-center lg:text-left">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade em {city}</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade Comercial</p>
                       <div className="text-7xl font-black tracking-tighter text-black flex items-baseline justify-center lg:justify-start">
-                        {diagnosis.score}<span className="text-xl opacity-20 ml-1">%</span>
+                        {diag.score}<span className="text-xl opacity-20 ml-1">%</span>
                       </div>
                     </div>
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-black text-white rounded-none w-full justify-center lg:justify-start shadow-xl">
                        <TrendingIcon size={14} />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Pólo {intel.type}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Pólo: {commerce.marketForce}</span>
                     </div>
                   </div>
                   
@@ -294,7 +275,7 @@ const App = () => {
                           </div>
                           <div>
                             <h4 className="text-[18px] font-black uppercase tracking-[0.3em] leading-tight">Parecer Comercial</h4>
-                            <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest mt-1">Especialista: Mariá Pettenazzi</p>
+                            <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest mt-1">MAP Representações | Interior de SP</p>
                           </div>
                         </div>
                         <div className="px-4 py-1.5 border-2 border-black/10">
@@ -302,13 +283,13 @@ const App = () => {
                         </div>
                       </div>
                       
-                      <div className="space-y-6 text-gray-800 diag-text">
+                      <div className="space-y-6 text-gray-800">
                         <div className="space-y-2">
                            <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                              <MessageSquare size={16} className="text-black/30" /> Sumário Estratégico de Mercado
+                              <MessageSquare size={16} className="text-black/30" /> Estratégia Regional: {city}
                            </h5>
-                           <p className="text-base font-medium text-justify">
-                              {diagnosis.analysis}
+                           <p className="text-base leading-snug font-medium text-justify">
+                              O pólo de {city} exige uma {commerce.strategy} Para a vertical de {currentSegment.name}, focaremos na abordagem junto ao comprador de perfil {commerce.buyerProfile}.
                            </p>
                         </div>
 
@@ -317,16 +298,16 @@ const App = () => {
                              <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
                                 <PackageSearch size={16} className="text-black" /> Gestão de Sell-in
                              </h5>
-                             <p className="text-sm text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diagnosis.sellIn}"
+                             <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
+                                "{diag.sellIn}"
                              </p>
                           </div>
                           <div className="space-y-2">
                              <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
                                 <Zap size={16} className="text-black" /> Ativação de Sell-out
                              </h5>
-                             <p className="text-sm text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diagnosis.sellOut}"
+                             <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
+                                "{diag.sellOut}"
                              </p>
                           </div>
                         </div>
@@ -334,10 +315,10 @@ const App = () => {
                         <div className="bg-black text-white p-6 space-y-3 shadow-2xl relative overflow-hidden">
                            <div className="relative z-10">
                               <h5 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                 <TargetIcon size={14} /> Plano de Expansão de PDVs
+                                 <Store size={14} /> Expansão e Abertura de Novos PDVs em {city}
                               </h5>
-                              <p className="text-base font-bold tracking-tight mt-1">
-                                 {diagnosis.expansion}
+                              <p className="text-base leading-snug font-bold tracking-tight mt-1">
+                                 {diag.expansion}
                               </p>
                            </div>
                            <div className="absolute -right-4 -bottom-4 opacity-10">
@@ -347,9 +328,19 @@ const App = () => {
                       </div>
 
                       <div className="mt-4 pt-6 border-t border-gray-200">
-                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 italic">Embasaamento Económico (Pólo {city}):</p>
-                            <p className="text-sm text-gray-600 font-bold leading-tight uppercase tracking-tight">PIB: {intel.pib} | {intel.drive}</p>
+                         <div className="flex flex-wrap gap-6">
+                            <div className="flex items-center gap-2">
+                               <CheckCircle size={14} className="text-black" />
+                               <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Mapeamento de PDV</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                               <CheckCircle size={14} className="text-black" />
+                               <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Gestão de Força de Vendas</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                               <CheckCircle size={14} className="text-black" />
+                               <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Inteligência de Mercado</span>
+                            </div>
                          </div>
                       </div>
                     </div>
@@ -367,9 +358,9 @@ const App = () => {
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
               <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 italic block">Especialista em Vendas Consultivas</span>
-              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão de Marcas.</h2>
+              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Gestão de Marcas.</h2>
               <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
-                A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho estratégico.
+                A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho estratégico focado em resultados.
               </p>
             </div>
             
