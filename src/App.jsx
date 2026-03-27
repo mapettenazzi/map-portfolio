@@ -138,7 +138,7 @@ const App = () => {
       <style>
         {`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
           html { scroll-behavior: smooth; }
-          body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+          body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
           .text-balance { text-wrap: balance; }
           .hero-mask {
             mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
@@ -147,68 +147,67 @@ const App = () => {
         `}
       </style>
 
-      {/* Navegação Fixa - Ajustada para Mobile */}
-      <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/95 backdrop-blur-md py-3 sm:py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-6 sm:py-8'}`}>
+      {/* Navegação Fixa - Limpa e sofisticada sem texto no mobile */}
+      <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/98 backdrop-blur-lg py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center">
-            <a href="#atuacao" className="hover:opacity-40 transition">Atuação</a>
-            <a href="#fundadora" className="hover:opacity-40 transition">Fundadora</a>
-            <a href="#segmentos" className="hover:opacity-40 transition">Segmentos</a>
-            <button onClick={() => setIsAiModalOpen(true)} className="bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 transition-all shadow-xl flex items-center gap-2">
+          <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center text-gray-500">
+            <a href="#atuacao" className="hover:text-black transition">Atuação</a>
+            <a href="#fundadora" className="hover:text-black transition">Fundadora</a>
+            <a href="#segmentos" className="hover:text-black transition">Segmentos</a>
+            <button onClick={() => setIsAiModalOpen(true)} className="bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 transition-all shadow-xl flex items-center gap-2 tracking-[0.2em]">
               IA SIMULADOR ✨
             </button>
-            <a href="#contato" className="hover:opacity-40 transition">Contato</a>
+            <a href="#contato" className="hover:text-black transition">Contato</a>
           </div>
           
-          <div className="lg:hidden flex w-full justify-between items-center">
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">MAP Representações</span>
-            <button onClick={() => setIsAiModalOpen(true)} className="p-3 bg-black text-white rounded-full shadow-2xl active:scale-90 transition-transform">
+          <div className="lg:hidden flex w-full justify-end items-center">
+            <button onClick={() => setIsAiModalOpen(true)} className="p-3 bg-black text-white rounded-full shadow-2xl active:scale-95 transition-transform">
               <Sparkles size={20} />
             </button>
           </div>
         </div>
       </nav>
 
-      {/* HERO SECTION - Ajustada para Mobile (Logo maior e espaçamentos maiores) */}
+      {/* HERO SECTION - Logo Máxima e Impacto Inicial para iOS/Android */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center blur-[1px]">
+        <div className="absolute inset-0 opacity-[0.4] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110" />
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_85%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_5%,_white_95%)]"></div>
 
-        <div className="relative z-10 text-center space-y-10 sm:space-y-12 animate-fade-in w-full max-w-5xl">
+        <div className="relative z-10 text-center space-y-12 animate-fade-in w-full max-w-5xl">
           <div className="space-y-6">
-            <p className="text-[10px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance px-4">
+            <p className="text-[11px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.4em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance px-4">
               Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
             </p>
           </div>
 
-          {/* Logo Principal - Forçada a ser maior no mobile (max-w-xs ou 340px) */}
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-4 sm:p-12 w-full max-w-[340px] sm:max-w-2xl md:max-w-4xl mx-auto">
-            <div className="absolute inset-0 bg-white/70 blur-[40px] sm:blur-[60px] rounded-full scale-110 -z-10"></div>
+          {/* Logo Principal - Impacto Máximo Mobile */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-2 sm:p-12 w-full max-w-[95vw] sm:max-w-4xl mx-auto">
+            <div className="absolute inset-0 bg-white/80 blur-[50px] sm:blur-[70px] rounded-full scale-125 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-2xl" 
+              className="w-full h-auto object-contain drop-shadow-2xl scale-110 sm:scale-100" 
             />
           </div>
 
-          <div className="pt-6 sm:pt-8">
+          <div className="pt-12 sm:pt-8">
              <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
-                <ChevronRight className="rotate-90 w-10 h-10 sm:w-12 sm:h-12" />
+                <ChevronRight className="rotate-90 w-12 h-12" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Ajustada para Mobile (Empilhamento vertical e texto centralizado) */}
+      {/* SEÇÃO: ATUAÇÃO - Imagem running com moldura ancorada */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <div className="space-y-12">
+          <div className="space-y-12 order-2 lg:order-1">
             <div className="space-y-8 text-center lg:text-left">
               <span className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-gray-300 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
-              <p className="text-gray-500 leading-relaxed text-base sm:text-xl font-light text-justify max-w-xl mx-auto lg:mx-0">
+              <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-light text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
               </p>
             </div>
@@ -220,18 +219,19 @@ const App = () => {
                 { title: "Relacionamento técnico", desc: "Conexão com profissionais de saúde.", icon: <Handshake /> }
               ].map((p, i) => (
                 <div key={i} className="flex flex-col sm:flex-row gap-6 sm:gap-10 group items-center sm:items-start text-center sm:text-left">
-                  <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
-                    {React.cloneElement(p.icon, { size: 28, strokeWidth: 1.5 })}
+                  <div className="flex-shrink-0 w-20 h-20 bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
+                    {React.cloneElement(p.icon, { size: 30, strokeWidth: 1.2 })}
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-extrabold text-[15px] sm:text-[16px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-sm sm:text-lg text-gray-400 font-light leading-snug">{p.desc}</p>
+                    <h4 className="font-extrabold text-[16px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
+                    <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative group mt-12 lg:mt-0">
+          {/* Foto Running com moldura de design para preencher o branco */}
+          <div className="relative group order-1 lg:order-2 mb-12 lg:mb-0 p-3 bg-gray-50 rounded-sm border border-gray-100 shadow-sm">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
             </div>
@@ -246,7 +246,7 @@ const App = () => {
              <div className="aspect-[3/4] overflow-hidden grayscale border-[1px] border-gray-200 shadow-2xl rounded-sm relative">
                 <SafeImage src={ASSETS.photoSpeaking} alt="Mariá Pettenazzi" className="w-full h-full object-cover" />
                 <div className="absolute top-6 right-6 bg-black text-white px-5 py-3 shadow-2xl backdrop-blur-md opacity-90 border-l-4 border-white/20">
-                   <p className="text-[9px] font-black uppercase tracking-[0.3em] leading-tight">Expertise Técnica<br/>& Comercial</p>
+                   <p className="text-[10px] font-black uppercase tracking-[0.3em] leading-tight">Expertise Técnica<br/>& Comercial</p>
                 </div>
              </div>
              <div className="mt-8 border-l-4 border-black pl-6">
@@ -261,7 +261,7 @@ const App = () => {
               <p className="text-xl sm:text-2xl font-medium text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
             
-            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-base sm:text-lg font-light max-w-xl">
+            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
               
               <div className="pt-8 border-t border-gray-200">
@@ -280,31 +280,33 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: SEGMENTOS */}
+      {/* SEÇÃO: SEGMENTOS - Legibilidade Mobile Otimizada (Fontes Robustas e Fundo de Alto Contraste) */}
       <section id="segmentos" className="py-24 sm:py-32 px-6 bg-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-24 space-y-8">
-            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-30 block italic">Portfólio Estratégico</span>
-            <h3 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase text-balance">Segmentos Estratégicos</h3>
+          <div className="text-center mb-24 space-y-8 px-4">
+            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-50 block italic">Portfólio Estratégico</span>
+            <h3 className="text-4xl sm:text-6xl font-extrabold tracking-tighter uppercase text-balance leading-tight">Segmentos Estratégicos</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-white/10 border border-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-white/20 border border-white/10">
             {[
               { title: "Nutracêuticos", icon: <Apple />, items: ["Ômega-3", "NAC", "Vitaminas"] },
               { title: "Nutrição Esportiva", icon: <Dumbbell />, items: ["Whey", "Creatina", "Aminoácidos"] },
-              { title: "Snacks Funcionais", icon: <Activity />, items: ["Barras", "Cookies", "Saudáveis"] },
-              { title: "Performance", icon: <Target />, items: ["Géis", "Eletrólitos", "Endurance"] },
-              { title: "Nutrição Clínica", icon: <Stethoscope />, items: ["Enteral", "Hospitalar", "Clínica"] }
+              { title: "Snacks Funcionais", icon: <Activity />, items: ["Alta Proteína", "Barrinhas de Proteína", "Alimentos Proteicos", "Saudáveis"] },
+              { title: "Performance", icon: <Target />, items: ["Eletrólitos", "Suplementação Endurance", "Performance Técnica"] },
+              { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Suplementação Médica", "Materiais Cirúrgicos"] }
             ].map((s, i) => (
-              <div key={i} className="bg-black p-10 hover:bg-white hover:text-black transition-all duration-700 group text-left">
-                <div className="mb-8 opacity-30 group-hover:opacity-100 transition-opacity">
-                  {React.cloneElement(s.icon, { size: 32, strokeWidth: 1 })}
+              <div key={i} className="bg-black p-12 hover:bg-white hover:text-black transition-all duration-700 group text-left">
+                <div className="mb-10 opacity-40 group-hover:opacity-100 transition-opacity text-current">
+                  {React.cloneElement(s.icon, { size: 40, strokeWidth: 1.5 })}
                 </div>
-                <h4 className="text-[14px] font-extrabold uppercase tracking-widest mb-6 h-auto sm:h-10 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
-                <ul className="space-y-4">
+                {/* Título com fonte Black para impacto visual */}
+                <h4 className="text-[18px] sm:text-[20px] font-black uppercase tracking-widest mb-8 h-auto sm:h-14 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
+                <ul className="space-y-5">
                   {s.items.map((item, idx) => (
-                    <li key={idx} className="text-[10px] sm:text-[11px] uppercase tracking-widest opacity-30 group-hover:opacity-100 flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-current rounded-full"></div> {item}
+                    /* Itens com fonte mais espessa e maior para facilitar leitura no telemóvel */
+                    <li key={idx} className="text-[12px] sm:text-[13px] font-bold uppercase tracking-widest opacity-40 group-hover:opacity-100 flex items-center gap-3 transition-opacity">
+                      <div className="w-2.5 h-2.5 bg-current rounded-full shrink-0"></div> {item}
                     </li>
                   ))}
                 </ul>
@@ -332,9 +334,9 @@ const App = () => {
                   </div>
                 </div>
                 
-                <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black">
+                <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest mb-4">Cidades Complementares</h4>
-                  <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance">
+                  <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance font-semibold">
                     Lençóis Paulista, Ibitinga, Matão, Lins, Tupã, Catanduva, Olímpia, Barretos, Araçatuba, Franca.
                   </p>
                 </div>
