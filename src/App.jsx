@@ -87,43 +87,54 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // ENGINE IA: Versão Blindada - Estrutura Simplificada para Garantir Sucesso
-  const callGemini = async (prompt, systemInstruction) => {
+  // ENGINE IA: Versão Blindada - Estrutura Simplificada para Garantir Sucesso Total
+  const callGemini = async (prompt, systemContext) => {
+    // Chave Validada pelo Usuário
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Endpoint validado para gemini-flash-latest
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    // Endpoint mais estável para v1beta
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
-    // Payload consolidado (instrução de sistema no prompt para evitar erros de schema)
+    // Mesclamos a instrução de sistema diretamente no texto para evitar erros de compatibilidade de campos
+    const combinedPrompt = `[INSTRUÇÃO DE SISTEMA PRIORITÁRIA]: ${systemContext}\n\n[DADOS DO CLIENTE]: ${prompt}`;
+
     const payload = {
       contents: [{
-        parts: [{ text: `${systemInstruction}\n\nSolicitação do usuário: ${prompt}` }]
+        parts: [{ text: combinedPrompt }]
       }],
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 1000,
+        topP: 0.8,
+        topK: 40,
+        maxOutputTokens: 1500,
       }
     };
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      
-      const result = await response.json();
-      
-      if (result.error) {
-        throw new Error(result.error.message);
+    // Lógica de Re-tentativa embutida
+    for (let i = 0; i < 3; i++) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        
+        if (result.error) {
+          console.error("Erro da API Gemini:", result.error.message);
+          if (i === 2) throw new Error(result.error.message);
+          continue; // Tenta novamente
+        }
+        
+        const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (responseText) return responseText;
+        
+      } catch (error) {
+        console.error(`Tentativa ${i+1} falhou:`, error);
+        if (i === 2) return "Lamentamos, mas o servidor de IA está com instabilidade momentânea. Por favor, tente novamente em alguns segundos.";
+        await new Promise(res => setTimeout(res, 1000)); // Espera 1s antes de repetir
       }
-      
-      const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-      return responseText || "Ocorreu uma pequena falha na conexão. Por favor, tente novamente.";
-
-    } catch (error) {
-      console.error("Falha Técnica IA:", error);
-      return "Tivemos um problema momentâneo na rede. Por favor, envie novamente.";
     }
   };
 
@@ -133,7 +144,7 @@ const App = () => {
     setIsLoading(true);
     const res = await callGemini(
       productInfo,
-      "És a Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa produtos para o interior paulista de forma técnica, direta e executiva."
+      "Age como Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa produtos para o interior de São Paulo (Bauru, Marília, Ribeirão Preto, etc). Fornece uma análise de viabilidade técnica, comercial e de logística. Sê direta, profissional e usa um tom executivo."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -145,7 +156,7 @@ const App = () => {
     setIsLoading(true);
     const res = await callGemini(
       pitchInput,
-      "És a Mariá Pettenazzi, CEO da MAP. Cria um PITCH DE VENDA matador e persuasivo para este produto, focado em convencer lojistas e profissionais de saúde do interior de SP. Usa gatilhos mentais de autoridade e exclusividade."
+      "Age como Mariá Pettenazzi. Cria um PITCH DE VENDA matador focado em convencer lojistas de nutrição e gerentes de hospitais no interior de SP. Destaca os benefícios técnicos e a autoridade da marca. Usa parágrafos curtos e impacto comercial."
     );
     setPitchResponse(res);
     setIsLoading(false);
@@ -161,7 +172,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "És o Assistente Virtual da MAP Representações. Ajuda no entendimento de mercado regional, nutrição e expansão comercial."
+      "És o Assistente Virtual da MAP Representações. Responde a dúvidas sobre a nossa área de atuação, os nossos segmentos (Hospitalar, Performance, Snacks) e como podemos ajudar indústrias a expandir no interior de SP."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -203,7 +214,6 @@ const App = () => {
 
       {/* HERO SECTION - REVISÃO MOBILE FINAL */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Padrão de Fundo - OPACIDADE MÍNIMA MOBILE (0.07) PARA NÃO BRIGAR COM A LOGO */}
         <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.30] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
@@ -214,8 +224,6 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
-          
-          {/* Logo Principal - ESCALA MÁXIMA TOTAL MOBILE (scale-150) */}
           <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.50] sm:scale-100">
             <div className="absolute inset-0 bg-white/40 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
@@ -224,7 +232,6 @@ const App = () => {
               className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.05)]" 
             />
           </div>
-
           <div className="mt-32 sm:mt-24">
              <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12 text-black/10" />
@@ -233,12 +240,11 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Letragem Elegante e Legível */}
+      {/* SEÇÃO: ATUAÇÃO */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
-              {/* Etiqueta cinza suave - Ponto de Marketing */}
               <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400/70 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
               <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
@@ -264,7 +270,6 @@ const App = () => {
               ))}
             </div>
           </div>
-
           <div className="relative group p-4 bg-gray-50/50 rounded-sm border border-gray-100 shadow-sm order-last lg:order-none mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
@@ -273,7 +278,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: FUNDADORA - Typography Refresh */}
+      {/* SEÇÃO: FUNDADORA */}
       <section id="fundadora" className="bg-gray-50 py-24 sm:py-32 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="relative order-2 lg:order-1">
@@ -301,7 +306,7 @@ const App = () => {
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
                        <CheckCircle2 size={20} className="text-black shrink-0" />
-                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-500">{item}</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-600">{item}</span>
                     </div>
                   ))}
                 </div>
