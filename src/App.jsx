@@ -32,7 +32,6 @@ import {
   Truck,
   MessageSquare,
   LayoutDashboard,
-  ZapOff,
   UserCheck,
   PackageSearch
 } from 'lucide-react';
@@ -66,69 +65,75 @@ const ASSETS = {
   logoCircle: "logo-circle.png"
 };
 
-// Base de Dados Regional Executiva com Expertise em Vendas e Supply Chain
-const CITIES = [
-  "Campinas", "Ribeirão Preto", "Sorocaba", "São José do Rio Preto", 
-  "Bauru", "Piracicaba", "São Carlos", "Jundiaí", "Marília", 
-  "Araraquara", "Botucatu", "Presidente Prudente", "Araçatuba", 
-  "Franca", "Limeira"
-];
+// Base de Dados de Cidades com Perfil Económico (Embasa o diagnóstico)
+const CITY_PROFILES = {
+  "Campinas": { pibFocus: "Tecnologia e Serviços", profile: "Maior PIB do interior, hub logístico e alta concentração de renda." },
+  "Ribeirão Preto": { pibFocus: "Agronegócio e Saúde", profile: "Capital do agronegócio com um dos maiores pólos médicos do país." },
+  "Sorocaba": { pibFocus: "Industrial e Logística", profile: "Crescimento industrial acelerado e proximidade estratégica com a capital." },
+  "São José do Rio Preto": { pibFocus: "Comércio e Saúde", profile: "Referência em serviços de saúde para todo o Noroeste Paulista." },
+  "Bauru": { pibFocus: "Serviços e Educação", profile: "Pólo geográfico estratégico com forte setor de serviços e logística ferroviária." },
+  "Piracicaba": { pibFocus: "Bioenergia e Indústria", profile: "Liderança no setor sucroalcooleiro e forte parque industrial." },
+  "São Carlos": { pibFocus: "Educação e Alta Tecnologia", profile: "Densidade intelectual elevada e pólo de inovação tecnológica." },
+  "Jundiaí": { pibFocus: "Logística e Manufatura", profile: "Um dos maiores centros logísticos do Brasil com alto IPC per capita." },
+  "Marília": { pibFocus: "Indústria Alimentícia", profile: "Pólo nacional de alimentos com forte tradição industrial." },
+  "Araraquara": { pibFocus: "Citricultura e Indústria", profile: "Economia sólida baseada no processamento de sucos e manufatura." },
+  "Botucatu": { pibFocus: "Saúde e Biotecnologia", profile: "Referência universitária e pólo industrial aeroespacial/saúde." },
+  "Presidente Prudente": { pibFocus: "Pecuária e Comércio", profile: "Capital regional do Oeste Paulista com forte influência comercial." },
+  "Araçatuba": { pibFocus: "Agronegócio e Energia", profile: "Forte atuação no setor de energia renovável e agroindústria." },
+  "Franca": { pibFocus: "Coureiro-Calçadista", profile: "Pólo calçadista com diversificação em serviços e agronegócio." },
+  "Limeira": { pibFocus: "Joias e Metalurgia", profile: "Pólo de semi-jóias com economia industrial dinâmica." }
+};
 
 const SEGMENTS = [
   { 
     id: "hosp", 
-    name: "Hospitalar & Dispositivos Médicos", 
-    score: 97.4, 
-    growthPotential: "Exponencial",
-    sellInStrategy: "Negociação de contratos de volume baseados em 'Safety Stock'. Foco em penetração de mix em grandes redes hospitalares.",
-    sellOutStrategy: "Suporte técnico 'intra-muros' para garantir a correta aplicação dos produtos, reduzindo desperdício e gerando recompra orgânica.",
-    pdvExpansion: "Mapeamento e abertura de 15+ novos pólos cirúrgicos e centros de oncologia no cinturão Campinas-Ribeirão.",
-    description: "Análise Económica: Região com PIB de Saúde em expansão de 5.8% ao ano. Alta densidade de leitos e centros médicos de excelência.",
-    management: "Gestão de CRM rigorosa para monitorar o ciclo de vida de equipamentos e renovação de contratos públicos/privados."
+    name: "Hospitalar", 
+    score: 98, 
+    growthPotential: "Crítico/Essencial",
+    sellIn: "Estratégia de Sell-in via contratos de fornecimento 'Just-in-Time' para redução de custos de estocagem hospitalar.",
+    sellOut: "Treinamento técnico de enfermeiros e compradores para otimizar o uso clínico e garantir a recompra mensal.",
+    pdv: "Foco na abertura de canais em hospitais filantrópicos e clínicas de diagnóstico por imagem.",
+    slogan: "Precisão que salva, gestão que lucra."
   },
   { 
-    id: "nutri", 
-    name: "Nutracêuticos & Suplementação Premium", 
-    score: 93.8, 
-    growthPotential: "Alto Valor",
-    sellInStrategy: "Estratégia de 'Premium Placement'. Condições de entrada vinculadas à exclusividade regional de portfólio.",
-    sellOutStrategy: "Marketing de Prescrição. Treinamento de equipas de PDV para venda consultiva focada em 'Bioidenticidade'.",
-    pdvExpansion: "Foco em Farmácias Independentes de Luxo e Clínicas de Nutrologia com alto poder de conversão.",
-    description: "Análise Económica: Público classe A/B com elevado IPC (Índice de Potencial de Consumo) para longevidade e medicina preventiva.",
-    management: "Monitorização de Share-of-Shelf e implementação de programas de fidelidade 'End-to-End'."
+    id: "suple", 
+    name: "Suplementação", 
+    score: 95, 
+    growthPotential: "Acelerado",
+    sellIn: "Utilização de 'Volume Rebates' para garantir o abastecimento completo do mix em redes de farmácias regionais.",
+    sellOut: "Trade Marketing intensivo: uso de promotores especializados para educação nutricional direta ao consumidor.",
+    pdv: "Expansão para redes independentes de farmácias de manipulação e varejo de luxo.",
+    slogan: "Performance técnica no balcão e no treino."
   },
   { 
     id: "perf", 
-    name: "Performance & Acessórios Endurance", 
-    score: 90.2, 
-    growthPotential: "Acelerado",
-    sellInStrategy: "Mix de produtos focado em 'High-Ticket Items'. Abastecimento estratégico pré-eventos desportivos regionais.",
-    sellOutStrategy: "Ativação de Brand Community. Sampling estratégico em assessorias de corrida e boxes de alto rendimento.",
-    pdvExpansion: "Abertura de canais em Lojas Especializadas de Specialized Sports e Ginásios Boutique.",
-    description: "Análise Económica: Lifestyle desportivo consolidado. O ticket médio nesta vertical é 40% superior à média do estado de SP.",
-    management: "Gestão de eventos e influência local para tracionar a saída do produto no PDV físico."
+    name: "Performance", 
+    score: 92, 
+    growthPotential: "Alto Ticket",
+    sellIn: "Estratégia de 'First-to-Market' com lançamentos exclusivos para PDVs conceito.",
+    sellOut: "Ativação de Brand Community em clubes de corrida e Triathlon para gerar demanda espontânea.",
+    pdv: "Mapeamento e abertura de lojas boutique desportivas e centros de alta performance.",
+    slogan: "A ciência do limite ao alcance do mercado."
   },
   { 
-    id: "sport", 
-    name: "Nutrição Esportiva & Core Supplements", 
-    score: 86.5, 
+    id: "esporte", 
+    name: "Nutrição Esportiva", 
+    score: 89, 
     growthPotential: "Consolidado",
-    sellInStrategy: "Campanhas agressivas de 'Sell-in' para garantir ocupação de gôndola. Foco em redução de custo logístico unitário.",
-    sellOutStrategy: "Ações de 'Ganha-Ganha' com balconistas e promotores de venda. Foco em volume e giro rápido de stock.",
-    pdvExpansion: "Capilarização em redes de lojas de suplementos de rua e grandes players de varejo fitness.",
-    description: "Análise Económica: Mercado maduro. A competitividade reside na agilidade de reposição e no relacionamento técnico da MAP.",
-    management: "Controle de ruptura de stock e análise de elasticidade-preço por micro-região."
+    sellIn: "Negociação baseada em giro rápido e campanhas de sell-in sazonais.",
+    sellOut: "Incentivos diretos para balconistas (Incentive Travel/Bónus) para conversão de marca no momento da compra.",
+    pdv: "Capilarização em academias de grande porte e lojas especializadas de rua.",
+    slogan: "Potencializando o varejo fitness."
   },
   { 
-    id: "snack", 
-    name: "Conveniência Saudável & Snacks", 
-    score: 91.0, 
-    growthPotential: "Alta Frequência",
-    sellInStrategy: "Logística 'Just-in-Time'. Entrada em redes de conveniência com foco em displays de checkout (Hot Zones).",
-    sellOutStrategy: "Neurovendas e Visual Merchandising. Exposição estratégica baseada no comportamento de compra por impulso.",
-    pdvExpansion: "Abertura massiva em cafetarias corporativas, redes de conveniência rodoviária e empórios gourmet.",
-    description: "Análise Económica: Crescimento do comportamento 'On-the-go'. Hubs logísticos regionais favorecem o consumo rápido.",
-    management: "Gestão de Category Management (CatMan) para otimizar o mix de sabores e formatos mais vendidos."
+    id: "alimentos", 
+    name: "Alimentos", 
+    score: 91, 
+    growthPotential: "Giro Elevado",
+    sellIn: "Logística integrada MAP para garantir reposição semanal e evitar ruptura de gôndola.",
+    sellOut: "Visual Merchandising estratégico: ocupação de 'Hot Zones' e frentes de caixa (impulsividade).",
+    pdv: "Abertura em cafetarias corporativas e redes de conveniência de postos premium.",
+    slogan: "Sabor que vende, saúde que gira."
   }
 ];
 
@@ -155,6 +160,7 @@ const App = () => {
   };
 
   const currentSegment = SEGMENTS.find(s => s.id === segmentId) || SEGMENTS[0];
+  const currentCityData = CITY_PROFILES[city] || CITY_PROFILES["Campinas"];
 
   const handleEmailClick = () => {
     window.location.href = "mailto:maaprroyo@outlook.com?subject=Contato Estratégico - MAP Representações";
@@ -183,27 +189,27 @@ const App = () => {
       </nav>
 
       {/* HERO SECTION - LOGO MÁXIMA PARA IMPACTO PREMIUM */}
-      <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 max-sm:opacity-[0.03] sm:opacity-[0.10] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+      <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
+        <div className="absolute inset-0 max-sm:opacity-[0.02] sm:opacity-[0.08] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_95%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
 
-        <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-2">
-          {/* Logo Principal - ESCALA MÁXIMA MOBILE: w-[110%] para impacto total sem distorção */}
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 w-[110%] ml-[-5%] sm:ml-0 sm:w-full max-w-4xl mx-auto">
+        <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
+          {/* Logo Principal - Ajuste Mobile: Super Impacto (w-[115%]) sem passar a página */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 w-[115%] ml-[-7.5%] sm:ml-0 sm:w-full max-w-5xl mx-auto">
             <div className="absolute inset-0 bg-white/95 blur-[120px] rounded-full scale-125 -z-10 hidden sm:block"></div>
-            <div className="absolute inset-0 bg-white/50 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
+            <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
             
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-sm" 
+              className="w-full h-auto object-contain" 
             />
           </div>
           
-          <div className="absolute bottom-12 sm:relative sm:mt-28 sm:bottom-auto">
+          <div className="absolute bottom-16 sm:relative sm:mt-28 sm:bottom-auto">
              <a href="#simulador" className="inline-block animate-bounce opacity-40 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12 text-black/20" />
              </a>
@@ -211,32 +217,32 @@ const App = () => {
         </div>
       </section>
 
-      {/* SIMULADOR DE POTENCIAL - GESTÃO COMERCIAL 360º */}
+      {/* SIMULADOR DE POTENCIAL - PARECER COMERCIAL FUNDAMENTADO */}
       <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4 px-4">
-            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Consultoria Técnica de Vendas</span>
-            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico de Expansão</h2>
-            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Análise de Sell-in, Sell-out e Capilaridade para o Interior Paulista.</p>
+            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Business Intelligence Territorial</span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico Comercial</h2>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação baseada no PIB e IPC real do interior paulista.</p>
           </div>
 
           <div className="bg-white p-6 sm:p-14 shadow-2xl rounded-sm border border-gray-100">
             <div className="grid sm:grid-cols-2 gap-8 mb-10">
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <Globe size={12}/> Polo Estratégico
+                  <Globe size={12}/> Polo de Atuação
                 </label>
                 <select 
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   className="w-full p-5 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none appearance-none hover:bg-gray-100/50"
                 >
-                  {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {Object.keys(CITY_PROFILES).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                  <ShoppingBag size={12}/> Vertical de Produto
+                  <ShoppingBag size={12}/> Segmento
                 </label>
                 <select 
                   value={segmentId}
@@ -254,9 +260,9 @@ const App = () => {
               className="w-full bg-black text-white py-10 text-[11px] font-black uppercase tracking-[0.5em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-2xl"
             >
               {isSimulating ? (
-                <><Loader2 className="animate-spin" size={20} /> CALCULANDO CRESCIMENTO DE SELL-OUT...</>
+                <><Loader2 className="animate-spin" size={20} /> COMPILANDO DADOS DE MERCADO...</>
               ) : (
-                <><BarChart size={20} /> GERAR DIRETRIZ COMERCIAL ✨</>
+                <><BarChart size={20} /> GERAR PARECER COMERCIAL ✨</>
               )}
             </button>
 
@@ -265,57 +271,63 @@ const App = () => {
                 <div className="grid lg:grid-cols-4 gap-12 items-start">
                   <div className="lg:col-span-1 space-y-8 text-center lg:text-left">
                     <div className="space-y-2">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade Técnica</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade</p>
                       <div className="text-8xl font-black tracking-tighter text-black flex items-baseline justify-center lg:justify-start">
                         {currentSegment.score}<span className="text-xl opacity-20 ml-1">%</span>
                       </div>
                     </div>
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-black text-white rounded-none w-full justify-center lg:justify-start">
                        <TrendingIcon size={14} />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Potencial: {currentSegment.growthPotential}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Crescimento: {currentSegment.growthPotential}</span>
                     </div>
                   </div>
                   
                   <div className="lg:col-span-3 space-y-10">
                     <div className="bg-gray-50 p-8 sm:p-12 border-l-8 border-black shadow-inner space-y-12">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-black text-white flex items-center justify-center">
-                          <LayoutDashboard size={24} />
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-black text-white flex items-center justify-center">
+                            <LayoutDashboard size={24} />
+                          </div>
+                          <h4 className="text-[14px] font-black uppercase tracking-[0.3em]">Parecer Comercial</h4>
                         </div>
-                        <h4 className="text-[14px] font-black uppercase tracking-[0.3em]">Parecer de Gestão Comercial - {city}</h4>
+                        <span className="text-[11px] font-black uppercase italic text-gray-400 tracking-widest">{currentSegment.slogan}</span>
                       </div>
                       
                       <div className="grid sm:grid-cols-2 gap-10">
                         <div className="space-y-4">
                            <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                              <PackageSearch size={16} /> Estratégia de Sell-in
+                              <PackageSearch size={16} /> Gestão de Sell-in
                            </h5>
-                           <p className="text-base leading-relaxed text-gray-700 font-medium italic border-l-2 border-gray-200 pl-4">
-                              "{currentSegment.sellInStrategy}"
+                           <p className="text-base leading-relaxed text-gray-700 font-medium italic border-l-2 border-gray-200 pl-4 text-justify">
+                              "{currentSegment.sellIn}"
                            </p>
                         </div>
                         <div className="space-y-4">
                            <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                              <Zap size={16} /> Estratégia de Sell-out
+                              <Zap size={16} /> Ativação de Sell-out
                            </h5>
-                           <p className="text-base leading-relaxed text-gray-700 font-medium italic border-l-2 border-gray-200 pl-4">
-                              "{currentSegment.sellOutStrategy}"
+                           <p className="text-base leading-relaxed text-gray-700 font-medium italic border-l-2 border-gray-200 pl-4 text-justify">
+                              "{currentSegment.sellOut}"
                            </p>
                         </div>
                       </div>
 
                       <div className="space-y-4 pt-4">
                         <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                           <UserCheck size={16} /> Gestão e Expansão de PDV
+                           <UserCheck size={16} /> Abertura e Expansão de Novos PDVs
                         </h5>
-                        <p className="text-lg leading-relaxed font-bold text-gray-800">
-                           {currentSegment.pdvExpansion}
+                        <p className="text-lg leading-relaxed font-bold text-gray-800 text-justify">
+                           {currentSegment.pdv}
                         </p>
                       </div>
 
                       <div className="mt-6 pt-8 border-t border-gray-200">
-                         <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4">Métrica Macro-Económica (Pólo SP):</p>
-                         <p className="text-base text-gray-500 leading-relaxed font-semibold uppercase">{currentSegment.description}</p>
+                         <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Embasaamento Económico (Pólo {city}):</p>
+                            <p className="text-base text-gray-600 font-bold leading-tight">{currentCityData.profile}</p>
+                            <p className="text-xs text-gray-400 uppercase tracking-widest font-black italic">Foco Regional: {currentCityData.pibFocus}</p>
+                         </div>
                       </div>
                     </div>
                   </div>
