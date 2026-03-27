@@ -37,7 +37,8 @@ import {
   Target as TargetIcon,
   ShoppingCart,
   Store,
-  BadgePercent
+  BadgePercent,
+  CheckCircle
 } from 'lucide-react';
 
 // Componente SafeImage para garantir a integridade visual
@@ -147,7 +148,7 @@ const App = () => {
     return { sellIn, sellOut, expansion, score: currentSegment.baseScore + (city === "Campinas" || city === "Ribeirão Preto" ? 4 : 1) };
   };
 
-  const diag = generateSalesDiagnosis();
+  const diagnosis = generateSalesDiagnosis();
 
   const handleEmailClick = () => {
     window.location.href = "mailto:maaprroyo@outlook.com?subject=Contato Estratégico - MAP Representações";
@@ -177,18 +178,18 @@ const App = () => {
 
       {/* HERO SECTION - LIMPEZA VISUAL CORRIGIDA */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
-        {/* Padrão de Fundo - Visibilidade Periférica */}
+        {/* Padrão de Fundo - Opacidade 20% e Escala 125% conforme pedido */}
         <div className="absolute inset-0 opacity-[0.20] scale-[1.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
-        {/* Máscara Radial - Limpa o centro para a logo reinar sozinha */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_white_25%,_white_45%,_transparent_100%)] sm:bg-[radial-gradient(circle,_white_35%,_white_55%,_transparent_100%)]"></div>
+        {/* Máscara Radial Suavizada - Permite ver o padrão mas mantém o centro limpo */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_white_20%,_white_40%,_transparent_100%)] opacity-80 sm:bg-[radial-gradient(circle,_white_25%,_white_50%,_transparent_100%)]"></div>
 
         <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 max-sm:w-[130%] max-sm:ml-[-15%] sm:w-full sm:max-w-4xl mx-auto flex items-center justify-center">
-            {/* White Glow para reforçar a limpeza visual */}
-            <div className="absolute inset-0 bg-white blur-[80px] rounded-full scale-150 -z-10 hidden sm:block"></div>
+            {/* White Glow subtil para separação */}
+            <div className="absolute inset-0 bg-white/40 blur-[100px] rounded-full scale-150 -z-10 hidden sm:block"></div>
             
             <SafeImage src={ASSETS.logoFullBlack} alt="MAP Representações" className="w-full h-auto object-contain mx-auto" />
           </div>
@@ -250,14 +251,14 @@ const App = () => {
               )}
             </button>
 
-            {showResult && (
+            {showResult && diagnosis && (
               <div className="mt-10 pt-10 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="grid lg:grid-cols-4 gap-10 items-start">
                   <div className="lg:col-span-1 space-y-6 text-center lg:text-left">
                     <div className="space-y-1">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade Comercial</p>
                       <div className="text-7xl font-black tracking-tighter text-black flex items-baseline justify-center lg:justify-start">
-                        {diag.score}<span className="text-xl opacity-20 ml-1">%</span>
+                        {diagnosis.score}<span className="text-xl opacity-20 ml-1">%</span>
                       </div>
                     </div>
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-black text-white rounded-none w-full justify-center lg:justify-start shadow-xl">
@@ -299,7 +300,7 @@ const App = () => {
                                 <PackageSearch size={16} className="text-black" /> Gestão de Sell-in
                              </h5>
                              <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diag.sellIn}"
+                                "{diagnosis.sellIn}"
                              </p>
                           </div>
                           <div className="space-y-2">
@@ -307,7 +308,7 @@ const App = () => {
                                 <Zap size={16} className="text-black" /> Ativação de Sell-out
                              </h5>
                              <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diag.sellOut}"
+                                "{diagnosis.sellOut}"
                              </p>
                           </div>
                         </div>
@@ -318,7 +319,7 @@ const App = () => {
                                  <Store size={14} /> Expansão e Abertura de Novos PDVs em {city}
                               </h5>
                               <p className="text-base leading-snug font-bold tracking-tight mt-1">
-                                 {diag.expansion}
+                                 {diagnosis.expansion}
                               </p>
                            </div>
                            <div className="absolute -right-4 -bottom-4 opacity-10">
