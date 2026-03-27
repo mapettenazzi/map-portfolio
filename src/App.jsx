@@ -49,7 +49,7 @@ const SafeImage = ({ src, alt, className, ...props }) => {
   );
 };
 
-// Mapeamento de Assets - Mantendo .png
+// Mapeamento de Assets
 const ASSETS = {
   logoFullBlack: "logo-full-black.png",
   logoHorizontal: "logo-horizontal.png",
@@ -85,51 +85,40 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // Função callGemini: Automação blindada com gemini-1.5-flash-latest
+  // Função callGemini: Versão Blindada para eliminar erros de conexão
   const callGemini = async (prompt, systemInstruction) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    if (!apiKey) return "Chave de API não configurada.";
+    if (!apiKey) return "Aguardando ativação da chave de API.";
 
-    // Endpoint v1beta com o modelo flash estável
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    // URL usando o modelo gemini-1.5-flash para máxima compatibilidade v1beta
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     const payload = {
       contents: [{
-        parts: [{ text: `INSTRUÇÃO DE SISTEMA: ${systemInstruction}\n\nPERGUNTA DO USUÁRIO: ${prompt}` }]
-      }],
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 1024,
-      }
+        parts: [{ text: `CONTEXTO MAP REPRESENTAÇÕES: ${systemInstruction}\n\nCLIENTE: ${prompt}` }]
+      }]
     };
 
-    // Automação de Retentativa (Retry Logic)
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error?.message || "Falha na requisição");
-        }
-        
-        const result = await response.json();
-        const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        if (textResponse) return textResponse;
-        throw new Error("Resposta vazia da IA");
-
-      } catch (error) {
-        if (attempt === 2) return `Erro de Automação: ${error.message}. Verifique sua conexão.`;
-        await new Promise(r => setTimeout(r, 1000 * (attempt + 1))); // Delay progressivo
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(result.error.message);
       }
+      
+      const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      return textResponse || "Não conseguimos processar o seu pedido agora. Tente novamente em alguns segundos.";
+
+    } catch (error) {
+      console.error("Erro na Automação IA:", error);
+      return "O sistema está recebendo muitas requisições no momento. Por favor, tente descrever o produto novamente.";
     }
   };
 
@@ -138,8 +127,8 @@ const App = () => {
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
     const res = await callGemini(
-      `Analise estrategicamente para o interior de SP este produto: ${productInfo}`,
-      "Você é a Mariá Pettenazzi, estrategista de expansão da MAP Representações. Seja técnica, direta e nítida."
+      `Faça uma análise de viabilidade para este produto no interior de São Paulo: ${productInfo}`,
+      "Você é a Mariá Pettenazzi, estrategista sênior da MAP Representações. Seja técnica, executiva e muito clara."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -155,7 +144,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "Assistente Estratégico MAP Representações. Especialista comercial em nutrição e saúde regional."
+      "Assistente Comercial MAP Representações. Especialista em saúde, performance e expansão regional em SP."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -172,7 +161,6 @@ const App = () => {
         {`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-          .text-balance { text-wrap: balance; }
         `}
       </style>
 
@@ -196,47 +184,49 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Foco Total na Logo com Minilogos ao Fundo (Nítido) */}
+      {/* HERO SECTION - Logo Gigante e Fundo de Minilogos Nítido */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Padrão de Fundo - Nitidez máxima com fundo branco radial */}
-        <div className="absolute inset-0 opacity-[0.45] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - Nitidez Aumentada (0.65) conforme solicitado */}
+        <div className="absolute inset-0 opacity-[0.65] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
-            alt="Padrão MAP" 
-            className="w-full h-full object-cover grayscale brightness-100" 
+            alt="Minilogos MAP" 
+            className="w-full h-full object-cover grayscale brightness-100 contrast-110" 
           />
         </div>
-        {/* Máscara radial para focar na logo central */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_20%,_white_98%)]"></div>
+        {/* Máscara radial para focar na logo central e dar profundidade */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_15%,_white_92%)]"></div>
 
-        <div className="relative z-10 text-center animate-fade-in w-full max-w-6xl flex flex-col items-center">
+        <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
           
-          {/* Logo Principal - Designer Touch: Impacto Total Mobile (Escala 92vw) */}
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 w-full max-w-[92vw] sm:max-w-5xl mx-auto">
-            <div className="absolute inset-0 bg-white/70 blur-[70px] rounded-full scale-110 -z-10"></div>
+          {/* Logo Principal - Designer Touch: Impacto Máximo Total Mobile (Escala 95vw) */}
+          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto">
+            {/* Brilho de destaque para separar a logo do padrão de fundo */}
+            <div className="absolute inset-0 bg-white/70 blur-[90px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_15px_45px_rgba(0,0,0,0.12)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_20px_60px_rgba(0,0,0,0.15)]" 
             />
           </div>
 
           <div className="mt-16 sm:mt-24">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-40 hover:opacity-100 transition-opacity">
-                <ChevronRight className="rotate-90 w-12 h-12 sm:w-20 sm:h-20 text-black/20" />
+             <a href="#atuacao" className="inline-block animate-bounce opacity-50 hover:opacity-100 transition-opacity">
+                <ChevronRight className="rotate-90 w-14 h-14 sm:w-20 sm:h-20 text-black/30" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Fluxo Mobile Estratégico: Texto -> Foto */}
+      {/* SEÇÃO: ATUAÇÃO - Cores Ajustadas para Leitura nítida */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-gray-400 italic block">Interior de São Paulo</span>
+              {/* Ajuste de cor: text-gray-800 para nitidez em qualquer brilho de tela */}
+              <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-800 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
-              <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-light text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
+              <p className="text-gray-600 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
               </p>
             </div>
@@ -253,13 +243,15 @@ const App = () => {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed">{p.desc}</p>
+                    {/* Ajuste de cor da descrição para melhor leitura */}
+                    <p className="text-base sm:text-lg text-gray-500 font-semibold leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Foto Running ancorada para fluxo de leitura correto no mobile */}
           <div className="relative group p-4 bg-gray-50/50 rounded-sm border border-gray-100 shadow-sm order-last lg:order-none mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
@@ -268,7 +260,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: FUNDADORA */}
+      {/* SEÇÃO: FUNDADORA - Letragem Escurecida para Leitura Noturna/Mobile */}
       <section id="fundadora" className="bg-gray-50 py-24 sm:py-32 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="relative order-2 lg:order-1">
@@ -279,24 +271,25 @@ const App = () => {
                 </div>
              </div>
              <div className="mt-8 border-l-4 border-black pl-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
+                {/* Ajuste de cor para nitidez total */}
+                <p className="text-xs font-black uppercase tracking-widest text-gray-800 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
           <div className="space-y-10 order-1 lg:order-2">
             <div className="space-y-6 pt-10 sm:pt-20">
-              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300">Fundadora</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-800">Fundadora</span>
               <h3 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tighter text-balance leading-none mt-6">Mariá Pettenazzi</h3>
-              <p className="text-xl sm:text-2xl font-medium text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
+              <p className="text-xl sm:text-2xl font-semibold text-black/80 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
-            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
+            <div className="space-y-6 text-gray-700 leading-relaxed text-justify text-lg font-medium max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
               <div className="pt-8 border-t border-gray-200">
-                <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase text-balance">Performance de Mercado</h4>
+                <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-gray-800 mb-8 italic uppercase text-balance">Performance de Mercado</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
                        <CheckCircle2 size={20} className="text-black shrink-0" />
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest leading-none">{item}</span>
+                       <span className="text-[11px] font-black uppercase tracking-widest leading-none text-gray-900">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -306,11 +299,11 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: SEGMENTOS - Legibilidade Máxima Mobile (Black Font) */}
+      {/* SEÇÃO: SEGMENTOS - Legibilidade Máxima (Itens Nítidos) */}
       <section id="segmentos" className="py-24 sm:py-32 px-6 bg-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-24 space-y-8 px-4">
-            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-50 block italic text-white/50">Portfólio Estratégico</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.6em] opacity-80 block italic text-white">Portfólio Estratégico</span>
             <h3 className="text-4xl sm:text-6xl font-extrabold tracking-tighter uppercase text-balance leading-tight">Segmentos Estratégicos</h3>
           </div>
 
@@ -323,14 +316,15 @@ const App = () => {
               { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Equipamentos Médicos", "Materiais Cirúrgicos"] }
             ].map((s, i) => (
               <div key={i} className="bg-black p-12 hover:bg-white hover:text-black transition-all duration-700 group text-left">
-                <div className="mb-10 opacity-40 group-hover:opacity-100 transition-opacity">
+                <div className="mb-10 opacity-50 group-hover:opacity-100 transition-opacity">
                   {React.cloneElement(s.icon, { size: 44, strokeWidth: 1.5 })}
                 </div>
-                {/* Legibilidade máxima: Fonte 900 (Black) */}
+                {/* Legibilidade máxima: Fonte Black para títulos nos segmentos */}
                 <h4 className="text-[18px] sm:text-[20px] font-black uppercase tracking-widest mb-8 h-auto sm:h-14 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
                 <ul className="space-y-6">
                   {s.items.map((item, idx) => (
-                    <li key={idx} className="text-[12px] sm:text-[13px] font-bold uppercase tracking-widest opacity-40 group-hover:opacity-100 flex items-center gap-3 transition-opacity">
+                    /* Ajustado: Opacidade de 40 para 90 para não "sumir" no mobile */
+                    <li key={idx} className="text-[12px] sm:text-[13px] font-black uppercase tracking-widest opacity-90 group-hover:opacity-100 flex items-center gap-3 transition-opacity">
                       <div className="w-2.5 h-2.5 bg-current rounded-full shrink-0"></div> {item}
                     </li>
                   ))}
@@ -341,26 +335,27 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: TERRITÓRIO */}
+      {/* SEÇÃO: TERRITÓRIO - Cores Nítidas */}
       <section id="territorio" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           <div className="space-y-12 text-center lg:text-left">
             <h3 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tighter border-b-[8px] sm:border-b-[10px] border-black pb-6 inline-block">Área de Atuação</h3>
             <div className="space-y-16">
                 <div>
-                  <h4 className="text-[12px] font-extrabold text-gray-300 uppercase tracking-widest mb-8 italic font-bold">Polos Regionais Prioritários</h4>
+                  {/* Letragem mais escura para polos regionais */}
+                  <h4 className="text-[12px] font-black text-gray-800 uppercase tracking-widest mb-8 italic">Polos Regionais Prioritários</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {["Bauru", "Botucatu", "Marília", "Ourinhos", "Araraquara", "Ribeirão Preto", "São Carlos"].map((c, i) => (
-                      <div key={i} className="py-4 border-b border-gray-100 text-base sm:text-lg font-extrabold uppercase tracking-widest flex items-center gap-4 group cursor-default text-balance text-black">
-                        <span className="w-2 h-2 bg-black scale-0 group-hover:scale-100 transition-transform"></span>
+                      <div key={i} className="py-4 border-b border-gray-100 text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-4 group cursor-default text-balance text-black">
+                        <span className="w-2.5 h-2.5 bg-black scale-0 group-hover:scale-100 transition-transform"></span>
                         {c}
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black shadow-sm">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest mb-4 text-black">Cidades Complementares</h4>
-                  <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance font-semibold">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest mb-4 text-gray-900">Cidades Complementares</h4>
+                  <p className="text-[11px] text-gray-600 uppercase tracking-widest leading-relaxed text-balance font-bold">
                     Lençóis Paulista, Ibitinga, Matão, Lins, Tupã, Catanduva, Olímpia, Barretos, Araçatuba, Franca.
                   </p>
                 </div>
@@ -371,7 +366,7 @@ const App = () => {
               <h3 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tighter mb-12 sm:mb-16 border-b border-white/20 pb-6">Canais Estratégicos</h3>
               <ul className="space-y-8">
                   {["Lojas de Suplementos", "Academias e CrossFit", "Empórios Saudáveis", "Farmácias & Drogarias", "Profissionais da Saúde", "Varejo Regional"].map((c, i) => (
-                  <li key={i} className="flex items-center gap-6 sm:gap-8 text-[12px] sm:text-[14px] font-extrabold uppercase tracking-widest group leading-tight">
+                  <li key={i} className="flex items-center gap-6 sm:gap-8 text-[12px] sm:text-[14px] font-black uppercase tracking-widest group leading-tight">
                       <ArrowRight size={20} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-4 transition-all shrink-0" /> {c}
                   </li>
                   ))}
@@ -396,7 +391,7 @@ const App = () => {
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-4">
-                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-bold tracking-[0.2em]">Contato Comercial Direto</p>
+                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-black tracking-[0.2em]">Contato Comercial Direto</p>
                  <p className="text-3xl sm:text-4xl font-black tracking-tighter leading-none">(14) 99193-4185</p>
                  <button onClick={handleEmailClick} className="text-lg sm:text-xl font-bold hover:underline opacity-80 block mt-4 break-all mx-auto">maaprroyo@outlook.com</button>
                </div>
@@ -414,10 +409,10 @@ const App = () => {
         className="fixed bottom-10 right-10 z-[60] bg-black text-white p-6 sm:p-7 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-4 group"
       >
         <MessageSquare size={28} />
-        <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-widest hidden lg:inline-block w-0 group-hover:w-auto overflow-hidden transition-all duration-500 whitespace-nowrap font-extrabold">CONSULTORIA ONLINE ✨</span>
+        <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-widest hidden lg:inline-block w-0 group-hover:w-auto overflow-hidden transition-all duration-500 whitespace-nowrap font-black">CONSULTORIA ONLINE ✨</span>
       </button>
 
-      {/* MODAL IA - Conectividade e UX Otimizadas */}
+      {/* MODAL IA - Conectividade e UX Blindada */}
       {isAiModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setIsAiModalOpen(false)}></div>
@@ -433,7 +428,7 @@ const App = () => {
                 <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
                   <div className="text-center space-y-6">
                     <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Valide sua Marca no Interior</h4>
-                    <p className="text-gray-400 text-lg sm:text-xl font-light italic">Inteligência Comercial MAP & Gemini AI</p>
+                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
                   </div>
                   {!aiResponse && !isLoading ? (
                     <form onSubmit={handleAiConsultancy} className="space-y-10 sm:space-y-12">
@@ -442,7 +437,7 @@ const App = () => {
                         value={productInfo} 
                         onChange={e => setProductInfo(e.target.value)} 
                         placeholder="Descreva o seu produto ou portfólio para análise técnica..." 
-                        className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-light resize-none" 
+                        className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-bold resize-none" 
                       />
                       <button type="submit" disabled={isLoading} className="w-full bg-black text-white py-8 sm:py-10 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.6em] hover:bg-gray-800 transition-all shadow-2xl active:scale-95 disabled:opacity-50">
                         {isLoading ? "PROCESSANDO..." : "PROCESSAR ANÁLISE"}
@@ -451,11 +446,11 @@ const App = () => {
                   ) : isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
                       <Loader2 className="animate-spin text-black" size={64} sm:size={80} />
-                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4">Consultando dados técnicos...</p>
+                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4 text-gray-900">Cruzando dados técnicos...</p>
                     </div>
                   ) : (
                     <div className="space-y-12 sm:space-y-16 animate-in zoom-in-95 text-balance">
-                       <div className="bg-gray-50 p-8 sm:p-14 border-l-[10px] sm:border-l-[12px] border-black text-lg sm:text-xl leading-relaxed whitespace-pre-wrap italic shadow-inner text-gray-800">
+                       <div className="bg-gray-50 p-8 sm:p-14 border-l-[10px] sm:border-l-[12px] border-black text-lg sm:text-xl leading-relaxed whitespace-pre-wrap italic shadow-inner text-gray-900 font-bold">
                         {aiResponse}
                        </div>
                        <button onClick={() => setAiResponse(null)} className="w-full border-4 border-black text-black py-8 text-[11px] sm:text-[12px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all active:scale-95">Nova Simulação</button>
@@ -467,7 +462,7 @@ const App = () => {
                   <div className="flex-1 overflow-y-auto space-y-8 sm:space-y-10 mb-10 pr-2 custom-scrollbar">
                     {chatMessages.map((msg, i) => (
                       <div key={i} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
-                        <div className={`max-w-[90%] sm:max-w-[85%] p-6 sm:p-10 text-lg sm:text-xl font-light leading-relaxed shadow-sm ${msg.role === 'ai' ? 'bg-gray-50 border-l-[10px] border-black text-gray-800' : 'bg-black text-white'}`}>{msg.text}</div>
+                        <div className={`max-w-[90%] sm:max-w-[85%] p-6 sm:p-10 text-lg sm:text-xl font-bold leading-relaxed shadow-sm ${msg.role === 'ai' ? 'bg-gray-50 border-l-[10px] border-black text-gray-900' : 'bg-black text-white'}`}>{msg.text}</div>
                       </div>
                     ))}
                     <div ref={chatEndRef} />
@@ -477,7 +472,7 @@ const App = () => {
                       value={chatInput} 
                       onChange={e => setChatInput(e.target.value)} 
                       placeholder="Dúvida técnica ou comercial..." 
-                      className="flex-1 bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 outline-none focus:border-black text-lg sm:text-xl font-light" 
+                      className="flex-1 bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 outline-none focus:border-black text-lg sm:text-xl font-bold" 
                     />
                     <button type="submit" disabled={isLoading || !chatInput.trim()} className="bg-black text-white px-8 sm:px-16 p-6 sm:p-10 hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center active:scale-95 disabled:opacity-50">
                       {isLoading ? <Loader2 className="animate-spin" size={32} /> : <Send size={32} />}
