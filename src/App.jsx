@@ -85,14 +85,14 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // Função callGemini com modelo estável e sua chave de API
+  // Função callGemini atualizada com o modelo gemini-1.5-flash-latest
   const callGemini = async (prompt, systemInstruction) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
     if (!apiKey) return "Erro de configuração: Chave de API ausente.";
 
-    // Alterado para gemini-1.5-flash para garantir compatibilidade com v1beta
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // URL atualizada para gemini-1.5-flash-latest conforme sua instrução técnica
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     
     const payload = {
       contents: [{ parts: [{ text: prompt }] }],
@@ -194,7 +194,7 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Logo Restaurada com Visibilidade Máxima */}
+      {/* HERO SECTION - Foco Total na Logo Grande no Mobile */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
         <div className="absolute inset-0 opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110 opacity-20" />
@@ -202,9 +202,9 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-5xl flex flex-col items-center">
-          {/* Tagline superior / Mini-logo: Restaurada e com opacidade maior para não ficar apagada */}
-          <div className="mb-8 sm:mb-12">
-            <p className="text-[12px] sm:text-xl md:text-2xl font-black uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-600 drop-shadow-sm text-balance">
+          {/* Tagline superior: Nitidez Máxima, mas apenas no Desktop (conforme pedido) */}
+          <div className="hidden sm:block mb-8 sm:mb-12">
+            <p className="text-[12px] sm:text-xl md:text-2xl font-black uppercase tracking-[0.3em] sm:tracking-[0.8em] text-black drop-shadow-sm text-balance">
               Saúde <span className="mx-2 text-black/20">·</span> Inovação <span className="mx-2 text-black/20">·</span> Performance
             </p>
           </div>
@@ -227,7 +227,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Texto primeiro, Imagem depois (UX Mobile Fluida) */}
+      {/* SEÇÃO: ATUAÇÃO - Fluxo Mobile: Texto antes da Imagem */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
@@ -250,7 +250,7 @@ const App = () => {
                     {React.cloneElement(p.icon, { size: 28, strokeWidth: 1.5 })}
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-extrabold text-[15px] sm:text-[16px] uppercase tracking-widest">{p.title}</h4>
+                    <h4 className="font-extrabold text-[16px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
                     <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
