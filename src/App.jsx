@@ -89,69 +89,60 @@ const App = () => {
 
   /**
    * ENGINE IA - VERSÃO BLINDADA 2026
-   * Correção definitiva de modelos e cabeçalhos da Google
+   * Sincronizada com o comando CURL de sucesso do utilizador.
    */
   const callGemini = async (userPrompt, roleContext) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Lista de modelos por ordem de prioridade para evitar o erro "not found"
-    const models = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-pro"];
+    // Utilizamos o modelo exato do seu teste funcional
+    const model = "gemini-flash-latest";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     
-    for (const modelName of models) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-      
-      const requestPayload = {
-        contents: [
-          {
-            parts: [
-              { 
-                text: `INSTRUÇÕES ESTRATÉGICAS:\n${roleContext}\n\nCLIENTE:\n${userPrompt}` 
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1000,
-        }
-      };
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestPayload)
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (aiText) return aiText;
-        } else {
-          // Se o erro for que o modelo não existe, tentamos o próximo da lista
-          if (data.error?.message?.includes("not found") || data.error?.status === "INVALID_ARGUMENT") {
-            console.warn(`Modelo ${modelName} falhou, a tentar o próximo...`);
-            continue;
-          }
-          return `Erro Técnico: ${data.error?.message || "Erro desconhecido"}`;
-        }
-      } catch (err) {
-        console.error("Erro de rede na tentativa:", err);
+    const requestPayload = {
+      contents: [{
+        parts: [{ 
+          text: `INSTRUCÇÃO DE SISTEMA: ${roleContext}\n\nSOLICITAÇÃO DO CLIENTE: ${userPrompt}` 
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1000,
       }
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey // Chave passada no header como no CURL
+        },
+        body: JSON.stringify(requestPayload)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("ERRO TÉCNICO DETECTADO:", data);
+        return `Erro: ${data.error?.message || "Falha na comunicação com o Google"}`;
+      }
+
+      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      return responseText || "O motor de IA não devolveu dados. Por favor, tente novamente.";
+
+    } catch (error) {
+      console.error("FALHA DE REDE:", error);
+      return "Falha de ligação ao servidor. Verifique a sua internet ou tente em instantes.";
     }
-    
-    return "Lamentamos, mas não foi possível ligar ao motor de IA após várias tentativas. Verifique a validade da sua API Key no Google AI Studio.";
   };
 
   const handleAiConsultancy = async (e) => {
     e.preventDefault();
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
-    setAiResponse(null);
     const res = await callGemini(
       productInfo,
-      "És a Mariá Pettenazzi, estrategista comercial experiente. Analisa este produto para o mercado do interior de São Paulo. Sê técnica, nítida e fornece insights sobre viabilidade e logística."
+      "Age como Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa produtos para o interior paulista de forma técnica, executiva e direta."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -161,10 +152,9 @@ const App = () => {
     e.preventDefault();
     if (!pitchInput.trim() || isLoading) return;
     setIsLoading(true);
-    setPitchResponse(null);
     const res = await callGemini(
       pitchInput,
-      "És a Mariá Pettenazzi. Cria um pitch de venda persuasivo e profissional para lojistas e hospitais. Foca na autoridade da MAP e nos benefícios técnicos do produto no interior de SP."
+      "Age como Mariá Pettenazzi. Cria um pitch de venda persuasivo e de alto impacto para lojistas e gestores de hospitais no interior de SP."
     );
     setPitchResponse(res);
     setIsLoading(false);
@@ -180,7 +170,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "És o Assistente Virtual da MAP Representações. Esclarece dúvidas sobre a nossa representação comercial, os nossos segmentos e a nossa vasta experiência no interior paulista."
+      "És o Assistente Virtual da MAP Representações. Ajuda no entendimento do mercado regional e expansão comercial."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -220,9 +210,9 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - MOBILE GIGANTE */}
+      {/* HERO SECTION - REVISÃO MOBILE FINAL */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        <div className="absolute inset-0 max-sm:opacity-[0.06] sm:opacity-[0.30] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
             alt="Padrão MAP" 
@@ -232,15 +222,16 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
-          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.50] sm:scale-100">
+          {/* Logo Principal - ESCALA MÁXIMA PARA MOBILE (scale-160) */}
+          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.60] sm:scale-100">
             <div className="absolute inset-0 bg-white/40 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.04)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.03)]" 
             />
           </div>
-          <div className="mt-32 sm:mt-24">
+          <div className="mt-36 sm:mt-24">
              <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12 text-black/10" />
              </a>
@@ -272,7 +263,7 @@ const App = () => {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-base sm:text-lg text-gray-400 font-medium leading-relaxed">{p.desc}</p>
+                    <p className="text-base sm:text-lg text-gray-500/80 font-medium leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
@@ -314,7 +305,7 @@ const App = () => {
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
                        <CheckCircle2 size={20} className="text-black shrink-0" />
-                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-600">{item}</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-500">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -413,7 +404,7 @@ const App = () => {
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-4">
-                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-bold tracking-[0.2em]">Contacto Comercial Direto</p>
+                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-black tracking-[0.2em]">Contacto Comercial Direto</p>
                  <p className="text-3xl sm:text-4xl font-black tracking-tighter leading-none">(14) 99193-4185</p>
                  <button onClick={handleEmailClick} className="text-lg sm:text-xl font-bold hover:underline opacity-80 block mt-4 break-all mx-auto">maaprroyo@outlook.com</button>
                </div>
