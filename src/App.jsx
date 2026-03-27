@@ -85,10 +85,12 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // Função callGemini: Chave inserida para funcionamento total
+  // Função callGemini com sua chave de API inserida
   const callGemini = async (prompt, systemInstruction) => {
-    const apiKey = "AIzaSyAZh-4W_7gzAZDCjos3uAZDXayb9wvOmP4"; 
+    const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
+    if (!apiKey) return "Erro de configuração: Chave de API ausente.";
+
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
     
     const payload = {
@@ -104,7 +106,10 @@ const App = () => {
           body: JSON.stringify(payload)
         });
         
-        if (!response.ok) throw new Error(`Status: ${response.status}`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "Erro na requisição");
+        }
         
         const result = await response.json();
         return result.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -119,9 +124,9 @@ const App = () => {
 
     try {
       const text = await fetchWithRetry();
-      return text || "Tente descrever o produto de outra forma.";
+      return text || "A IA não conseguiu processar os dados. Tente reformular seu texto.";
     } catch (err) {
-      return "Sistema em atualização. Por favor, tente novamente em instantes.";
+      return `Erro de conexão: ${err.message}. Verifique a internet e tente novamente.`;
     }
   };
 
@@ -130,8 +135,8 @@ const App = () => {
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
     const res = await callGemini(
-      `Analise o potencial de expansão para: ${productInfo} no interior de SP.`,
-      "Você é a Mariá Pettenazzi, estrategista da MAP Representações. Resposta técnica e profissional."
+      `Analise estrategicamente este produto para o interior de SP: ${productInfo}.`,
+      "Você é a Mariá Pettenazzi, estrategista comercial da MAP Representações. Responda de forma técnica e executiva."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -147,7 +152,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "Assistente Estratégico MAP Representações. Especialista em saúde e mercado regional."
+      "Assistente Estratégico MAP Representações. Especialista em nutrição e mercado hospitalar."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -164,10 +169,11 @@ const App = () => {
         {`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+          .text-balance { text-wrap: balance; }
         `}
       </style>
 
-      {/* Navegação Fixa - Limpa e Sem Texto no Mobile */}
+      {/* Navegação Fixa */}
       <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/98 backdrop-blur-lg py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-center">
           <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center text-gray-500">
@@ -187,22 +193,22 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Foco Total na Logo Grande no Mobile */}
+      {/* HERO SECTION - Logo Gigante no Mobile e Limpo */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
         <div className="absolute inset-0 opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
-          <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110" />
+          <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110 opacity-20" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-5xl flex flex-col items-center">
-          {/* Tagline superior - Escondida no Mobile conforme pedido */}
+          {/* Tagline superior - Escondida no Mobile para dar foco total à logo */}
           <div className="hidden sm:block mb-8 sm:mb-12">
             <p className="text-[10px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance">
               Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
             </p>
           </div>
 
-          {/* Logo Principal - Designer Touch: Impacto Total Mobile */}
+          {/* Logo Principal - Impacto Total Mobile */}
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 w-full max-w-[88vw] sm:max-w-4xl mx-auto">
             <div className="absolute inset-0 bg-white/80 blur-[60px] sm:blur-[80px] rounded-full scale-125 -z-10"></div>
             <SafeImage 
@@ -220,7 +226,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Fluxo de Leitura Mobile: Texto -> Foto */}
+      {/* SEÇÃO: ATUAÇÃO - Texto primeiro, Imagem depois (Melhor UX mobile) */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
@@ -251,7 +257,7 @@ const App = () => {
             </div>
           </div>
 
-          {/* Foto Running ancorada embaixo no mobile para um fluxo natural */}
+          {/* Foto Running abaixo no mobile para fechar a seção */}
           <div className="relative group p-4 bg-gray-50/50 rounded-sm border border-gray-100 shadow-sm order-last lg:order-none mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
@@ -283,7 +289,7 @@ const App = () => {
             <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
               <div className="pt-8 border-t border-gray-200">
-                <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase text-balance">Performance & Resultados</h4>
+                <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase text-balance">Performance e Resultados</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
@@ -298,7 +304,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: SEGMENTOS - Legibilidade Máxima (Fontes Black) */}
+      {/* SEÇÃO: SEGMENTOS - Legibilidade Máxima Mobile (Black Font) */}
       <section id="segmentos" className="py-24 sm:py-32 px-6 bg-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-24 space-y-8 px-4">
@@ -318,6 +324,7 @@ const App = () => {
                 <div className="mb-10 opacity-40 group-hover:opacity-100 transition-opacity">
                   {React.cloneElement(s.icon, { size: 44, strokeWidth: 1.5 })}
                 </div>
+                {/* Legibilidade máxima: Fonte 900 (Black) */}
                 <h4 className="text-[18px] sm:text-[20px] font-black uppercase tracking-widest mb-8 h-auto sm:h-14 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
                 <ul className="space-y-6">
                   {s.items.map((item, idx) => (
@@ -408,7 +415,7 @@ const App = () => {
         <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-widest hidden lg:inline-block w-0 group-hover:w-auto overflow-hidden transition-all duration-500 whitespace-nowrap font-extrabold">CONSULTORIA ONLINE ✨</span>
       </button>
 
-      {/* MODAL IA - Conectividade Otimizada */}
+      {/* MODAL IA - Conectividade e UX Otimizadas */}
       {isAiModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setIsAiModalOpen(false)}></div>
@@ -436,13 +443,13 @@ const App = () => {
                         className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-light resize-none" 
                       />
                       <button type="submit" disabled={isLoading} className="w-full bg-black text-white py-8 sm:py-10 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.6em] hover:bg-gray-800 transition-all shadow-2xl active:scale-95 disabled:opacity-50">
-                        PROCESSAR ANÁLISE
+                        {isLoading ? "PROCESSANDO..." : "PROCESSAR ANÁLISE"}
                       </button>
                     </form>
                   ) : isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
                       <Loader2 className="animate-spin text-black" size={64} sm:size={80} />
-                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4">Consultando dados técnicos...</p>
+                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4">Cruzando dados técnicos...</p>
                     </div>
                   ) : (
                     <div className="space-y-12 sm:space-y-16 animate-in zoom-in-95 text-balance">
