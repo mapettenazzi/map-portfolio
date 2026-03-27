@@ -23,13 +23,11 @@ import {
   Map as MapIcon,
   Search,
   Handshake,
-  BarChart3,
   PieChart,
-  Navigation,
-  Target as TargetIcon
+  Loader2
 } from 'lucide-react';
 
-// Componente SafeImage para garantir o carregamento robusto
+// Componente SafeImage com fallback para manter a integridade visual
 const SafeImage = ({ src, alt, className, ...props }) => {
   const [error, setError] = useState(false);
   return error ? (
@@ -58,23 +56,20 @@ const ASSETS = {
   logoCircle: "logo-circle.png"
 };
 
-// Base de Dados Imutável para o Simulador (Proteção contra erros de referência)
-const REGIONAL_DATA = {
-  cities: ["Bauru", "Ribeirão Preto", "São Carlos", "Marília", "Araraquara", "Botucatu"],
-  segments: [
-    { id: "hosp", name: "Hospitalar", score: 98, tips: "Alta procura por dietas enterais e materiais cirúrgicos especializados." },
-    { id: "nutri", name: "Nutracêuticos", score: 92, tips: "Foco em farmácias de manipulação e redes de saúde premium." },
-    { id: "perf", name: "Performance", score: 95, tips: "Público de alto ticket em box de CrossFit e ginásios boutique." },
-    { id: "sport", name: "Nutrição Esportiva", score: 89, tips: "Mercado consolidado com grande foco em renovação de portfólio." },
-    { id: "snack", name: "Snacks Saudáveis", score: 85, tips: "Crescimento acelerado em empórios e varejo especializado." }
-  ]
-};
+// Base de Dados Linear (Evita erros de referência profunda que causam ecrã branco)
+const CITIES = ["Bauru", "Ribeirão Preto", "São Carlos", "Marília", "Araraquara", "Botucatu"];
+const SEGMENTS = [
+  { id: "hosp", name: "Hospitalar", score: 98, tips: "Alta procura por dietas enterais e materiais cirúrgicos." },
+  { id: "nutri", name: "Nutracêuticos", score: 92, tips: "Foco em farmácias de manipulação e redes premium." },
+  { id: "perf", name: "Performance", score: 95, tips: "Público de alto ticket em box de CrossFit e ginásios." },
+  { id: "sport", name: "Nutrição Esportiva", score: 89, tips: "Mercado consolidado com foco em renovação de portfólio." },
+  { id: "snack", name: "Snacks Saudáveis", score: 85, tips: "Crescimento acelerado em empórios e varejo." }
+];
 
 const App = () => {
   const [scrolled, setScrolled] = useState(false);
-  // Estado robusto usando IDs em vez de objetos diretos
-  const [selectedCity, setSelectedCity] = useState("Bauru");
-  const [selectedSegmentId, setSelectedSegmentId] = useState(REGIONAL_DATA.segments[0].id);
+  const [city, setCity] = useState("Bauru");
+  const [segmentId, setSegmentId] = useState("hosp");
   const [isSimulating, setIsSimulating] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
@@ -84,18 +79,16 @@ const App = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Encontra o segmento atual de forma segura
-  const currentSegment = REGIONAL_DATA.segments.find(s => s.id === selectedSegmentId) || REGIONAL_DATA.segments[0];
-
   const handleSimulate = () => {
     setIsSimulating(true);
     setShowResult(false);
-    // Simulação de processamento técnico
     setTimeout(() => {
       setIsSimulating(false);
       setShowResult(true);
-    }, 1000);
+    }, 800);
   };
+
+  const currentSegment = SEGMENTS.find(s => s.id === segmentId) || SEGMENTS[0];
 
   const handleEmailClick = () => {
     window.location.href = "mailto:maaprroyo@outlook.com?subject=Contato Estratégico - MAP Representações";
@@ -112,78 +105,76 @@ const App = () => {
 
       {/* Navegação */}
       <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/98 backdrop-blur-lg py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-center">
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.4em] items-center text-gray-500 mx-auto lg:mx-0">
-            <a href="#atuacao" className="hover:text-black transition hidden md:inline">Atuação</a>
-            <a href="#fundadora" className="hover:text-black transition hidden md:inline">Fundadora</a>
-            <a href="#simulador" className="text-black border-b-2 border-black pb-1">Diagnóstico ✨</a>
+            <a href="#atuacao" className="hover:text-black transition hidden sm:inline">Atuação</a>
+            <a href="#fundadora" className="hover:text-black transition hidden sm:inline">Fundadora</a>
+            <a href="#simulador" className="text-black font-black">Diagnóstico ✨</a>
             <a href="#segmentos" className="hover:text-black transition">Segmentos</a>
             <a href="#contato" className="hover:text-black transition">Contato</a>
           </div>
         </div>
       </nav>
 
-      {/* HERO SECTION - LOGO MÁXIMA E CENTRALIZADA */}
-      <section className="relative h-screen flex items-center justify-center bg-white overflow-hidden px-4">
-        {/* Padrão de Fundo Sutil */}
-        <div className="absolute inset-0 max-sm:opacity-[0.04] sm:opacity-[0.15] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
-          <SafeImage src={ASSETS.introPattern} alt="Padrão MAP" className="w-full h-full object-cover grayscale brightness-110" />
+      {/* HERO SECTION - REFINADO E CENTRALIZADO */}
+      <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
+        {/* Padrão de Fundo - Opacidade mínima para elegância */}
+        <div className="absolute inset-0 max-sm:opacity-[0.03] sm:opacity-[0.15] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+          <SafeImage src={ASSETS.introPattern} alt="Padrão MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
-        {/* Máscara radial aprimorada */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_25%,_white_95%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_95%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
 
-        <div className="relative z-10 w-full max-w-7xl flex flex-col items-center">
-          {/* Logo Principal - IMPACTO TOTAL MOBILE (scale-210) */}
-          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[85vw] sm:max-w-5xl mx-auto scale-[2.10] sm:scale-100">
-            {/* Efeito de brilho para separar do padrão */}
+        <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center">
+          {/* Logo Principal - CORREÇÃO DE TAMANHO: w-[88%] sem scale para não passar as bordas */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 w-[88%] sm:w-full max-w-3xl mx-auto">
             <div className="absolute inset-0 bg-white/95 blur-[100px] rounded-full scale-125 -z-10 hidden sm:block"></div>
-            <div className="absolute inset-0 bg-white/30 blur-[40px] rounded-full scale-110 -z-10 sm:hidden"></div>
+            <div className="absolute inset-0 bg-white/40 blur-[40px] rounded-full scale-110 -z-10 sm:hidden"></div>
             
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.03)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.02)]" 
             />
           </div>
           
-          <div className="absolute bottom-12 sm:relative sm:mt-24 sm:bottom-auto">
-             <a href="#simulador" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
-                <ChevronRight className="rotate-90 w-12 h-12 text-black/20" />
+          <div className="absolute bottom-16 sm:relative sm:mt-24 sm:bottom-auto">
+             <a href="#simulador" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
+                <ChevronRight className="rotate-90 w-10 h-10 text-black/10" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SIMULADOR DE POTENCIAL - LÓGICA BLINDADA */}
+      {/* SIMULADOR DE POTENCIAL - LÓGICA LINEAR (Zero Erros) */}
       <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative">
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4">
-            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block">Estratégia & Dados</span>
-            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico de Potencial</h2>
-            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação técnica instantânea para a sua marca no interior paulista.</p>
+            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block">Diagnóstico Técnico</span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Potencial Regional</h2>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação de mercado instantânea para a sua marca.</p>
           </div>
 
-          <div className="bg-white p-6 sm:p-12 shadow-2xl rounded-sm border border-gray-100">
+          <div className="bg-white p-6 sm:p-12 shadow-xl rounded-sm border border-gray-100">
             <div className="grid sm:grid-cols-2 gap-6 mb-10">
               <div className="space-y-3">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Cidade Alvo</label>
                 <select 
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full p-5 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full p-5 bg-gray-50 border border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none appearance-none"
                 >
-                  {REGIONAL_DATA.cities.map(city => <option key={city} value={city}>{city}</option>)}
+                  {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Segmento do Produto</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Segmento</label>
                 <select 
-                  value={selectedSegmentId}
-                  onChange={(e) => setSelectedSegmentId(e.target.value)}
-                  className="w-full p-5 bg-gray-50 border-2 border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none"
+                  value={segmentId}
+                  onChange={(e) => setSegmentId(e.target.value)}
+                  className="w-full p-5 bg-gray-50 border border-gray-100 focus:border-black outline-none font-bold text-lg transition-all cursor-pointer rounded-none appearance-none"
                 >
-                  {REGIONAL_DATA.segments.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  {SEGMENTS.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
             </div>
@@ -191,30 +182,28 @@ const App = () => {
             <button 
               onClick={handleSimulate}
               disabled={isSimulating}
-              className="w-full bg-black text-white py-8 text-[11px] font-black uppercase tracking-[0.5em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98]"
+              className="w-full bg-black text-white py-8 text-[11px] font-black uppercase tracking-[0.4em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98]"
             >
               {isSimulating ? (
-                <><Loader2 className="animate-spin" size={18} /> PROCESSANDO DADOS TÉCNICOS...</>
+                <><Loader2 className="animate-spin" size={18} /> A ANALISAR...</>
               ) : (
-                <><PieChart size={18} /> GERAR DIAGNÓSTICO ESTRATÉGICO</>
+                <><PieChart size={18} /> GERAR RESULTADO ✨</>
               )}
             </button>
 
             {showResult && (
-              <div className="mt-12 pt-12 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="grid sm:grid-cols-3 gap-10 items-center text-center sm:text-left">
-                  <div className="space-y-2">
+              <div className="mt-12 pt-12 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="grid sm:grid-cols-3 gap-10 items-center">
+                  <div className="text-center sm:text-left space-y-1">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade</p>
                     <div className="text-6xl font-black tracking-tighter text-black">
                       {currentSegment.score}<span className="text-lg opacity-20 ml-1">%</span>
                     </div>
                   </div>
                   <div className="sm:col-span-2 bg-gray-50 p-6 sm:p-8 border-l-4 border-black italic">
-                    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <Lightbulb size={16} className="text-black" /> Insight Comercial
-                    </p>
+                    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">Diretriz MAP</p>
                     <p className="text-lg text-black font-bold leading-relaxed">
-                      "Em {selectedCity}, o segmento {currentSegment.name} apresenta um potencial de entrada agressivo. {currentSegment.tips}"
+                      "Para {city}, o segmento {currentSegment.name} é estratégico. {currentSegment.tips}"
                     </p>
                   </div>
                 </div>
@@ -224,7 +213,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - LEITURA NÍTIDA */}
+      {/* SEÇÃO: ATUAÇÃO */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
@@ -330,47 +319,6 @@ const App = () => {
                 </ul>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SEÇÃO: TERRITÓRIO */}
-      <section id="territorio" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-          <div className="space-y-12 text-center lg:text-left">
-            <h3 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tighter border-b-[8px] sm:border-b-[10px] border-black pb-6 inline-block">Área de Atuação</h3>
-            <div className="space-y-16">
-                <div>
-                  <h4 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 italic">Polos Regionais Prioritários</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {REGIONAL_DATA.cities.map((c, i) => (
-                      <div key={i} className="py-4 border-b border-gray-100 text-base sm:text-lg font-bold uppercase tracking-widest flex items-center gap-4 group cursor-default text-balance text-black">
-                        <span className="w-2 h-2 bg-black scale-0 group-hover:scale-100 transition-transform"></span>
-                        {c}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black shadow-sm">
-                  <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-gray-500">Cidades Complementares</h4>
-                  <p className="text-[11px] text-gray-500 uppercase tracking-widest leading-relaxed text-balance font-semibold">
-                    Lençóis Paulista, Ibitinga, Matão, Lins, Tupã, Catanduva, Olímpia, Barretos, Araçatuba, Franca.
-                  </p>
-                </div>
-            </div>
-          </div>
-          <div className="bg-black text-white p-12 sm:p-16 shadow-2xl relative overflow-hidden flex flex-col justify-between rounded-sm mt-12 lg:mt-0">
-            <div className="relative z-10">
-              <h3 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tighter mb-12 sm:mb-16 border-b border-white/20 pb-6">Canais Estratégicos</h3>
-              <ul className="space-y-8">
-                  {["Lojas de Suplementos", "Academias e CrossFit", "Empórios Saudáveis", "Farmácias & Drogarias", "Profissionais da Saúde", "Varejo Regional"].map((c, i) => (
-                  <li key={i} className="flex items-center gap-6 sm:gap-8 text-[12px] sm:text-[14px] font-extrabold uppercase tracking-widest group leading-tight">
-                      <ArrowRight size={20} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-4 transition-all shrink-0" /> {c}
-                  </li>
-                  ))}
-              </ul>
-            </div>
-            <SafeImage src={ASSETS.logoCircle} alt="" className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.03] pointer-events-none" />
           </div>
         </div>
       </section>
