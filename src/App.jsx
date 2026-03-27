@@ -30,7 +30,7 @@ import {
   Handshake
 } from 'lucide-react';
 
-// Componente SafeImage para garantir carregamento e design
+// Componente SafeImage para garantir o carregamento correto dos assets
 const SafeImage = ({ src, alt, className, ...props }) => {
   const [error, setError] = useState(false);
   return error ? (
@@ -84,17 +84,25 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // ENGINE IA: Versão Especialista para Zero Erros
+  // ENGINE IA: Versão Blindada - Correção de erro de sobrecarga e estrutura
   const callGemini = async (prompt, systemInstruction) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Endpoint robusto para gemini-1.5-flash-latest
+    // Endpoint otimizado para gemini-1.5-flash-latest
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     
     const payload = {
       contents: [{
-        parts: [{ text: `INSTRUÇÃO DE SISTEMA: ${systemInstruction}\n\nPERGUNTA DO USUÁRIO: ${prompt}` }]
-      }]
+        parts: [{ text: prompt }]
+      }],
+      systemInstruction: {
+        parts: [{ text: systemInstruction }]
+      },
+      generationConfig: {
+        temperature: 0.8,
+        topP: 0.95,
+        maxOutputTokens: 1000,
+      }
     };
 
     try {
@@ -110,11 +118,12 @@ const App = () => {
         throw new Error(result.error.message);
       }
       
-      return result.candidates?.[0]?.content?.parts?.[0]?.text || "Desculpe, tive um problema técnico. Pode repetir?";
+      return result.candidates?.[0]?.content?.parts?.[0]?.text || "Lamentamos, ocorreu um erro na geração da resposta.";
 
     } catch (error) {
-      console.error("IA Falhou:", error);
-      return "O sistema está processando muitos dados. Por favor, tente enviar novamente em 3 segundos.";
+      console.error("Falha Técnica IA:", error);
+      // Fallback para reconexão
+      return "O sistema está a ser reiniciado para garantir a melhor análise. Por favor, tente clicar novamente no botão de envio.";
     }
   };
 
@@ -123,8 +132,8 @@ const App = () => {
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
     const res = await callGemini(
-      `Analise estrategicamente este portfólio para o interior paulista: ${productInfo}`,
-      "Você é a Mariá Pettenazzi, CEO da MAP Representações. Responda como uma estrategista comercial de elite, técnica e inspiradora."
+      `Análise estratégica de viabilidade para: ${productInfo}`,
+      "És a Mariá Pettenazzi, estrategista comercial da MAP Representações. A tua função é analisar produtos para o mercado do interior de São Paulo de forma técnica, direta e executiva, focada em nutrição e saúde."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -140,7 +149,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "Assistente Estratégico da MAP Representações. Especialista em saúde, performance e varejo no interior de SP."
+      "És o Assistente Virtual da MAP Representações. Ajuda os clientes a entenderem a nossa área de atuação, segmentos de saúde e performance, e como podemos ajudar na expansão comercial em SP."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -180,45 +189,45 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Revisão de Impacto e Nitidez */}
+      {/* HERO SECTION - Revisão de Impacto Mobile (Logo Gigante e Fundo Sutil) */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Minilogos de Fundo - Opacidade ajustada para não brigar com a logo (0.35) */}
-        <div className="absolute inset-0 opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - Opacidade mínima no mobile para não brigar com a logo (0.10) */}
+        <div className="absolute inset-0 max-sm:opacity-[0.10] sm:opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
-            alt="Fundo MAP" 
+            alt="Padrão MAP" 
             className="w-full h-full object-cover grayscale brightness-100 contrast-105" 
           />
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_20%,_white_95%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
           
-          {/* Logo Principal - ESCALA MÁXIMA NO MOBILE (95vw) */}
-          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto">
-            <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10"></div>
+          {/* Logo Principal - IMPACTO TOTAL MOBILE (scale-135) */}
+          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.35] sm:scale-100">
+            <div className="absolute inset-0 bg-white/50 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_10px_40px_rgba(0,0,0,0.08)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_15px_45px_rgba(0,0,0,0.06)]" 
             />
           </div>
 
-          <div className="mt-20 sm:mt-24">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-40 hover:opacity-100 transition-opacity">
+          <div className="mt-24 sm:mt-24">
+             <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12 sm:w-16 sm:h-16 text-black/10" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Letragem Refinada (text-gray-600) */}
+      {/* SEÇÃO: ATUAÇÃO - Letragem Refinada */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
-              {/* Ajuste de nitidez: cinza chumbo médio */}
-              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-600 italic block">Interior de São Paulo</span>
+              {/* Etiqueta suave para conexão visual de marketing */}
+              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400/80 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
               <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
@@ -237,8 +246,7 @@ const App = () => {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
-                    {/* Letragem nítida no mobile */}
-                    <p className="text-base sm:text-lg text-gray-500 font-medium leading-relaxed">{p.desc}</p>
+                    <p className="text-base sm:text-lg text-gray-400 font-medium leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
@@ -247,13 +255,13 @@ const App = () => {
 
           <div className="relative group p-4 bg-gray-50/50 rounded-sm border border-gray-100 shadow-sm order-last lg:order-none mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
-              <SafeImage src={ASSETS.photoRunning} alt="Performance" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
+              <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: FUNDADORA - Cores Equilibradas para iPhone/Android */}
+      {/* SEÇÃO: FUNDADORA - Typography Refresh */}
       <section id="fundadora" className="bg-gray-50 py-24 sm:py-32 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="relative order-2 lg:order-1">
@@ -264,25 +272,24 @@ const App = () => {
                 </div>
              </div>
              <div className="mt-8 border-l-4 border-black pl-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-600 italic">Nutricionista & Gestora Comercial</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
           <div className="space-y-10 order-1 lg:order-2">
             <div className="space-y-6 pt-10 sm:pt-20">
-              {/* Cor nítida sem ser pesada */}
-              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-600">Fundadora</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400">Fundadora</span>
               <h3 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tighter text-balance leading-none mt-6">Mariá Pettenazzi</h3>
               <p className="text-xl sm:text-2xl font-semibold text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
-            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-medium max-w-xl">
+            <div className="space-y-6 text-gray-500 leading-relaxed text-justify text-lg font-medium max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
               <div className="pt-8 border-t border-gray-200">
-                <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-600 mb-8 italic uppercase text-balance">Performance de Mercado</h4>
+                <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase text-balance">Performance de Mercado</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
                        <CheckCircle2 size={20} className="text-black shrink-0" />
-                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-700">{item}</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-600">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -292,11 +299,11 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: SEGMENTOS - Legibilidade Máxima */}
+      {/* SEÇÃO: SEGMENTOS */}
       <section id="segmentos" className="py-24 sm:py-32 px-6 bg-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-24 space-y-8 px-4">
-            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-80 block italic text-gray-300">Portfólio Estratégico</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-80 block italic text-gray-400">Portfólio Estratégico</span>
             <h3 className="text-4xl sm:text-6xl font-extrabold tracking-tighter uppercase text-balance leading-tight">Segmentos Estratégicos</h3>
           </div>
 
@@ -326,14 +333,14 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: TERRITÓRIO - Nitidez Gray-600 */}
+      {/* SEÇÃO: TERRITÓRIO */}
       <section id="territorio" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           <div className="space-y-12 text-center lg:text-left">
             <h3 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tighter border-b-[8px] sm:border-b-[10px] border-black pb-6 inline-block">Área de Atuação</h3>
             <div className="space-y-16">
                 <div>
-                  <h4 className="text-[12px] font-bold text-gray-600 uppercase tracking-widest mb-8 italic">Polos Regionais Prioritários</h4>
+                  <h4 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-8 italic">Polos Regionais Prioritários</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {["Bauru", "Botucatu", "Marília", "Ourinhos", "Araraquara", "Ribeirão Preto", "São Carlos"].map((c, i) => (
                       <div key={i} className="py-4 border-b border-gray-100 text-base sm:text-lg font-bold uppercase tracking-widest flex items-center gap-4 group cursor-default text-balance text-black">
@@ -344,7 +351,7 @@ const App = () => {
                   </div>
                 </div>
                 <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black shadow-sm">
-                  <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-gray-700">Cidades Complementares</h4>
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-gray-400">Cidades Complementares</h4>
                   <p className="text-[11px] text-gray-500 uppercase tracking-widest leading-relaxed text-balance font-semibold">
                     Lençóis Paulista, Ibitinga, Matão, Lins, Tupã, Catanduva, Olímpia, Barretos, Araçatuba, Franca.
                   </p>
@@ -381,7 +388,7 @@ const App = () => {
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-4">
-                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-black tracking-[0.2em]">Contato Comercial Direto</p>
+                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-black tracking-[0.2em]">Contacto Comercial Direto</p>
                  <p className="text-3xl sm:text-4xl font-black tracking-tighter leading-none">(14) 99193-4185</p>
                  <button onClick={handleEmailClick} className="text-lg sm:text-xl font-bold hover:underline opacity-80 block mt-4 break-all mx-auto">maaprroyo@outlook.com</button>
                </div>
@@ -418,7 +425,7 @@ const App = () => {
                 <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
                   <div className="text-center space-y-6">
                     <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Valide sua Marca no Interior</h4>
-                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
+                    <p className="text-gray-400 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
                   </div>
                   {!aiResponse && !isLoading ? (
                     <form onSubmit={handleAiConsultancy} className="space-y-10 sm:space-y-12">
