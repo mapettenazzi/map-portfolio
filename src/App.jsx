@@ -58,7 +58,7 @@ const SafeImage = ({ src, alt, className, ...props }) => {
   );
 };
 
-// Mapeamento de Assets - Mantendo .png como solicitado
+// Mapeamento de Assets - Mantendo .png conforme solicitado
 const ASSETS = {
   logoFullBlack: "logo-full-black.png",
   logoHorizontal: "logo-horizontal.png",
@@ -140,16 +140,12 @@ const App = () => {
           html { scroll-behavior: smooth; }
           body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
           .text-balance { text-wrap: balance; }
-          .hero-mask {
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
-            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
-          }
         `}
       </style>
 
-      {/* Navegação Fixa - Limpa e sofisticada sem texto no mobile */}
+      {/* Navegação Fixa - Minimalista no Mobile */}
       <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/98 backdrop-blur-lg py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-center">
           <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center text-gray-500">
             <a href="#atuacao" className="hover:text-black transition">Atuação</a>
             <a href="#fundadora" className="hover:text-black transition">Fundadora</a>
@@ -159,7 +155,6 @@ const App = () => {
             </button>
             <a href="#contato" className="hover:text-black transition">Contato</a>
           </div>
-          
           <div className="lg:hidden flex w-full justify-end items-center">
             <button onClick={() => setIsAiModalOpen(true)} className="p-3 bg-black text-white rounded-full shadow-2xl active:scale-95 transition-transform">
               <Sparkles size={20} />
@@ -168,42 +163,43 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Logo Máxima e Impacto Inicial para iOS/Android */}
-      <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 opacity-[0.4] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
-          <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110" />
+      {/* HERO SECTION - Foco Total na Logo Grande no Mobile */}
+      <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.3] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+          <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110 opacity-20" />
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_5%,_white_95%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_5%,_white_98%)]"></div>
 
-        <div className="relative z-10 text-center space-y-12 animate-fade-in w-full max-w-5xl">
-          <div className="space-y-6">
-            <p className="text-[11px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.4em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance px-4">
+        <div className="relative z-10 text-center animate-fade-in w-full max-w-5xl px-4 flex flex-col items-center">
+          {/* Logo Principal - Impacto Máximo Mobile */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 w-full max-w-[85vw] sm:max-w-4xl mx-auto">
+            <div className="absolute inset-0 bg-white/90 blur-[60px] sm:blur-[70px] rounded-full scale-125 -z-10"></div>
+            <SafeImage 
+              src={ASSETS.logoFullBlack} 
+              alt="MAP Representações" 
+              className="w-full h-auto object-contain drop-shadow-2xl" 
+            />
+          </div>
+
+          {/* Tagline - Apenas Desktop para limpar o Hero Mobile */}
+          <div className="hidden sm:block mt-12">
+            <p className="text-[11px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.4em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance">
               Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
             </p>
           </div>
 
-          {/* Logo Principal - Impacto Máximo Mobile */}
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-2 sm:p-12 w-full max-w-[95vw] sm:max-w-4xl mx-auto">
-            <div className="absolute inset-0 bg-white/80 blur-[50px] sm:blur-[70px] rounded-full scale-125 -z-10"></div>
-            <SafeImage 
-              src={ASSETS.logoFullBlack} 
-              alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-2xl scale-110 sm:scale-100" 
-            />
-          </div>
-
-          <div className="pt-12 sm:pt-8">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
+          <div className="mt-12 sm:mt-16">
+             <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Imagem running com moldura ancorada */}
+      {/* SEÇÃO: ATUAÇÃO - Foto Running posicionada embaixo no Mobile */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <div className="space-y-12 order-2 lg:order-1">
+          <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
               <span className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-gray-300 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
@@ -214,26 +210,27 @@ const App = () => {
             
             <div className="grid gap-10 sm:gap-12">
               {[
-                { title: "Presença em campo", desc: "Visitação activa e relacionamento directo.", icon: <MapPin /> },
+                { title: "Presença em campo", desc: "Visitação ativa e relacionamento direto.", icon: <MapPin /> },
                 { title: "Inteligência comercial", desc: "Mapeamento e desenvolvimento regional.", icon: <Search /> },
                 { title: "Relacionamento técnico", desc: "Conexão com profissionais de saúde.", icon: <Handshake /> }
               ].map((p, i) => (
                 <div key={i} className="flex flex-col sm:flex-row gap-6 sm:gap-10 group items-center sm:items-start text-center sm:text-left">
                   <div className="flex-shrink-0 w-20 h-20 bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
-                    {React.cloneElement(p.icon, { size: 30, strokeWidth: 1.2 })}
+                    {React.cloneElement(p.icon, { size: 28, strokeWidth: 1.5 })}
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-extrabold text-[16px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
+                    <h4 className="font-extrabold text-[15px] sm:text-[16px] uppercase tracking-widest">{p.title}</h4>
                     <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          {/* Foto Running com moldura de design para preencher o branco */}
-          <div className="relative group order-1 lg:order-2 mb-12 lg:mb-0 p-3 bg-gray-50 rounded-sm border border-gray-100 shadow-sm">
+
+          {/* Imagem Running - Invertida no mobile para ficar abaixo do texto */}
+          <div className="relative group p-3 bg-gray-50 rounded-sm border border-gray-100 shadow-sm order-last">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
-              <SafeImage src={ASSETS.photoRunning} alt="Performance" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
+              <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
             </div>
           </div>
         </div>
@@ -253,17 +250,14 @@ const App = () => {
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
-          
           <div className="space-y-10 order-1 lg:order-2">
             <div className="space-y-6 pt-10 sm:pt-20">
               <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300">Fundadora</span>
               <h3 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tighter text-balance leading-none mt-6">Mariá Pettenazzi</h3>
               <p className="text-xl sm:text-2xl font-medium text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
-            
             <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
-              
               <div className="pt-8 border-t border-gray-200">
                 <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase">Trajetória na Mercur S.A.</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,11 +274,11 @@ const App = () => {
         </div>
       </section>
 
-      {/* SEÇÃO: SEGMENTOS - Legibilidade Mobile Otimizada (Fontes Robustas e Fundo de Alto Contraste) */}
+      {/* SEÇÃO: SEGMENTOS - Legibilidade Mobile Máxima (Fontes Robustas) */}
       <section id="segmentos" className="py-24 sm:py-32 px-6 bg-black text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-24 space-y-8 px-4">
-            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-50 block italic">Portfólio Estratégico</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-50 block italic text-white/50">Portfólio Estratégico</span>
             <h3 className="text-4xl sm:text-6xl font-extrabold tracking-tighter uppercase text-balance leading-tight">Segmentos Estratégicos</h3>
           </div>
 
@@ -292,19 +286,19 @@ const App = () => {
             {[
               { title: "Nutracêuticos", icon: <Apple />, items: ["Ômega-3", "NAC", "Vitaminas"] },
               { title: "Nutrição Esportiva", icon: <Dumbbell />, items: ["Whey", "Creatina", "Aminoácidos"] },
-              { title: "Snacks Funcionais", icon: <Activity />, items: ["Alta Proteína", "Barrinhas de Proteína", "Alimentos Proteicos", "Saudáveis"] },
-              { title: "Performance", icon: <Target />, items: ["Eletrólitos", "Suplementação Endurance", "Performance Técnica"] },
-              { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Suplementação Médica", "Materiais Cirúrgicos"] }
+              { title: "Snacks Funcionais", icon: <Activity />, items: ["Barrinhas de Proteína", "Alimentos Proteicos", "Saudáveis"] },
+              { title: "Performance", icon: <Target />, items: ["Eletrólitos", "Endurance", "Acessórios de Endurance"] },
+              { title: "Hospitalar", icon: <Stethoscope />, items: ["Dietas Enterais", "Equipamentos Médicos", "Materiais Cirúrgicos"] }
             ].map((s, i) => (
               <div key={i} className="bg-black p-12 hover:bg-white hover:text-black transition-all duration-700 group text-left">
-                <div className="mb-10 opacity-40 group-hover:opacity-100 transition-opacity text-current">
+                <div className="mb-10 opacity-40 group-hover:opacity-100 transition-opacity">
                   {React.cloneElement(s.icon, { size: 40, strokeWidth: 1.5 })}
                 </div>
-                {/* Título com fonte Black para impacto visual */}
+                {/* Títulos com fonte Black (900) para leitura instantânea no mobile */}
                 <h4 className="text-[18px] sm:text-[20px] font-black uppercase tracking-widest mb-8 h-auto sm:h-14 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
-                <ul className="space-y-5">
+                <ul className="space-y-6">
                   {s.items.map((item, idx) => (
-                    /* Itens com fonte mais espessa e maior para facilitar leitura no telemóvel */
+                    /* Itens com fonte bold (700) e maior espaçamento */
                     <li key={idx} className="text-[12px] sm:text-[13px] font-bold uppercase tracking-widest opacity-40 group-hover:opacity-100 flex items-center gap-3 transition-opacity">
                       <div className="w-2.5 h-2.5 bg-current rounded-full shrink-0"></div> {item}
                     </li>
@@ -333,7 +327,6 @@ const App = () => {
                     ))}
                   </div>
                 </div>
-                
                 <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest mb-4">Cidades Complementares</h4>
                   <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance font-semibold">
@@ -363,14 +356,12 @@ const App = () => {
         <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center blur-[4px]">
            <SafeImage src={ASSETS.footerPattern} alt="Footer Background" className="w-full h-full object-cover" />
         </div>
-
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-16">
           <div className="space-y-8">
             <h4 className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase tracking-tighter text-white/90 text-balance leading-tight">Sua marca no interior paulista.</h4>
             <div className="w-20 h-1 bg-white/20 mx-auto"></div>
             <p className="text-gray-400 uppercase tracking-widest text-sm sm:text-base font-bold italic">Bauru – São Paulo | Brasil</p>
           </div>
-          
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-4">
