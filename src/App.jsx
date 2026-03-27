@@ -126,7 +126,6 @@ const App = () => {
 
   // Motor de Inteligência Comercial (Cruzamento Total Segmento x Cidade)
   const generateDiagnosis = () => {
-    const seg = currentSegment.name;
     const cty = city;
     const isTopTier = city === "Campinas" || city === "Ribeirão Preto" || city === "Jundiaí";
 
@@ -193,21 +192,21 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - LIMPEZA VISUAL CORRIGIDA */}
+      {/* HERO SECTION - LIMPEZA VISUAL AJUSTADA */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
-        {/* Padrão de Fundo - Opacidade 20% e Escala 125% - Posicionado para não sujar a logo */}
+        {/* Padrão de Fundo - Opacidade 20% e Escala 125% - Maior visibilidade solicitada */}
         <div className="absolute inset-0 opacity-[0.20] scale-[1.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
-        {/* Máscara Radial Sólida no Centro - Garante que a logo reine sozinha */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,_white_25%,_white_40%,_transparent_100%)] sm:bg-[radial-gradient(circle,_white_35%,_white_50%,_transparent_100%)]"></div>
+        {/* Máscara Radial Suave - Reduzi a opacidade central para deixar as minilogos aparecerem mais */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,_white_10%,_transparent_70%)] sm:bg-[radial-gradient(circle,_white_15%,_transparent_80%)]"></div>
 
         <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
           {/* Logo Principal - Impacto Magnus no Mobile (w-[130%]) */}
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 max-sm:w-[130%] max-sm:ml-[-15%] sm:w-full sm:max-w-4xl mx-auto flex items-center justify-center">
-            {/* Glow Branco para isolamento extra no Desktop */}
-            <div className="absolute inset-0 bg-white/70 blur-[120px] rounded-full scale-150 -z-10 hidden sm:block"></div>
+            {/* Glow Branco Ajustado - Menos opaco para não "limpar" demais as minilogos */}
+            <div className="absolute inset-0 bg-white/30 blur-[80px] rounded-full scale-125 -z-10 hidden sm:block"></div>
             
             <SafeImage src={ASSETS.logoFullBlack} alt="MAP Representações" className="w-full h-auto object-contain mx-auto" />
           </div>
@@ -308,7 +307,7 @@ const App = () => {
                               <MessageSquare size={16} className="text-black/30" /> Resumo Estratégico - Polo {city}
                            </h5>
                            <p className="text-base font-medium text-justify leading-snug">
-                              {diag.analysis || `O pólo de ${city} é impulsionado por ${intel.focus}. Para a vertical de ${currentSegment.name}, identificamos uma oportunidade baseada no perfil ${intel.consumer}, que possui ${intel.trait}`}
+                              {`O pólo de ${city} é impulsionado por ${intel.focus}. Para a vertical de ${currentSegment.name}, identificamos uma oportunidade baseada no perfil ${intel.consumer}, que possui ${intel.trait}`}
                            </p>
                         </div>
 
@@ -429,7 +428,7 @@ const App = () => {
                 </div>
              </div>
              <div className="mt-8 border-l-4 border-black pl-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 italic">Nutricionista & Gestora Comercial</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
           <div className="space-y-10 order-1 lg:order-2">
