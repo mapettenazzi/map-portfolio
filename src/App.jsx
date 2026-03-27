@@ -27,7 +27,8 @@ import {
   CheckCircle2,
   Map as MapIcon,
   Search,
-  Handshake
+  Handshake,
+  Mic2
 } from 'lucide-react';
 
 // Componente SafeImage para garantir o carregamento correto dos assets
@@ -64,7 +65,9 @@ const App = () => {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [activeAiTab, setActiveAiTab] = useState('simulator'); 
   const [productInfo, setProductInfo] = useState("");
+  const [pitchInput, setPitchInput] = useState("");
   const [aiResponse, setAiResponse] = useState(null);
+  const [pitchResponse, setPitchResponse] = useState(null);
   const [chatMessages, setChatMessages] = useState([
     { role: 'ai', text: 'Olá! Sou o Assistente Estratégico da MAP. Como podemos expandir sua marca hoje? ✨' }
   ]);
@@ -84,23 +87,20 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // ENGINE IA: Versão Blindada - Correção de erro de sobrecarga e estrutura
+  // ENGINE IA: Versão Blindada - Estrutura Simplificada para Garantir Sucesso
   const callGemini = async (prompt, systemInstruction) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Endpoint otimizado para gemini-1.5-flash-latest
+    // Endpoint validado para gemini-flash-latest
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     
+    // Payload consolidado (instrução de sistema no prompt para evitar erros de schema)
     const payload = {
       contents: [{
-        parts: [{ text: prompt }]
+        parts: [{ text: `${systemInstruction}\n\nSolicitação do usuário: ${prompt}` }]
       }],
-      systemInstruction: {
-        parts: [{ text: systemInstruction }]
-      },
       generationConfig: {
-        temperature: 0.8,
-        topP: 0.95,
+        temperature: 0.7,
         maxOutputTokens: 1000,
       }
     };
@@ -118,12 +118,12 @@ const App = () => {
         throw new Error(result.error.message);
       }
       
-      return result.candidates?.[0]?.content?.parts?.[0]?.text || "Lamentamos, ocorreu um erro na geração da resposta.";
+      const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      return responseText || "Ocorreu uma pequena falha na conexão. Por favor, tente novamente.";
 
     } catch (error) {
       console.error("Falha Técnica IA:", error);
-      // Fallback para reconexão
-      return "O sistema está a ser reiniciado para garantir a melhor análise. Por favor, tente clicar novamente no botão de envio.";
+      return "Tivemos um problema momentâneo na rede. Por favor, envie novamente.";
     }
   };
 
@@ -132,10 +132,22 @@ const App = () => {
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
     const res = await callGemini(
-      `Análise estratégica de viabilidade para: ${productInfo}`,
-      "És a Mariá Pettenazzi, estrategista comercial da MAP Representações. A tua função é analisar produtos para o mercado do interior de São Paulo de forma técnica, direta e executiva, focada em nutrição e saúde."
+      productInfo,
+      "És a Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa produtos para o interior paulista de forma técnica, direta e executiva."
     );
     setAiResponse(res);
+    setIsLoading(false);
+  };
+
+  const handlePitchGeneration = async (e) => {
+    e.preventDefault();
+    if (!pitchInput.trim() || isLoading) return;
+    setIsLoading(true);
+    const res = await callGemini(
+      pitchInput,
+      "És a Mariá Pettenazzi, CEO da MAP. Cria um PITCH DE VENDA matador e persuasivo para este produto, focado em convencer lojistas e profissionais de saúde do interior de SP. Usa gatilhos mentais de autoridade e exclusividade."
+    );
+    setPitchResponse(res);
     setIsLoading(false);
   };
 
@@ -149,7 +161,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "És o Assistente Virtual da MAP Representações. Ajuda os clientes a entenderem a nossa área de atuação, segmentos de saúde e performance, e como podemos ajudar na expansão comercial em SP."
+      "És o Assistente Virtual da MAP Representações. Ajuda no entendimento de mercado regional, nutrição e expansão comercial."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -189,45 +201,45 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Revisão de Impacto Mobile (Logo Gigante e Fundo Sutil) */}
+      {/* HERO SECTION - REVISÃO MOBILE FINAL */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Padrão de Fundo - Opacidade mínima no mobile para não brigar com a logo (0.10) */}
-        <div className="absolute inset-0 max-sm:opacity-[0.10] sm:opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - OPACIDADE MÍNIMA MOBILE (0.07) PARA NÃO BRIGAR COM A LOGO */}
+        <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.30] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
             alt="Padrão MAP" 
-            className="w-full h-full object-cover grayscale brightness-100 contrast-105" 
+            className="w-full h-full object-cover grayscale" 
           />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
           
-          {/* Logo Principal - IMPACTO TOTAL MOBILE (scale-135) */}
-          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.35] sm:scale-100">
-            <div className="absolute inset-0 bg-white/50 blur-[80px] rounded-full scale-110 -z-10"></div>
+          {/* Logo Principal - ESCALA MÁXIMA TOTAL MOBILE (scale-150) */}
+          <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.50] sm:scale-100">
+            <div className="absolute inset-0 bg-white/40 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_15px_45px_rgba(0,0,0,0.06)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.05)]" 
             />
           </div>
 
-          <div className="mt-24 sm:mt-24">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
-                <ChevronRight className="rotate-90 w-12 h-12 sm:w-16 sm:h-16 text-black/10" />
+          <div className="mt-32 sm:mt-24">
+             <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
+                <ChevronRight className="rotate-90 w-12 h-12 text-black/10" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Letragem Refinada */}
+      {/* SEÇÃO: ATUAÇÃO - Letragem Elegante e Legível */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
-              {/* Etiqueta suave para conexão visual de marketing */}
-              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400/80 italic block">Interior de São Paulo</span>
+              {/* Etiqueta cinza suave - Ponto de Marketing */}
+              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400/70 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
               <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
@@ -246,7 +258,7 @@ const App = () => {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-base sm:text-lg text-gray-400 font-medium leading-relaxed">{p.desc}</p>
+                    <p className="text-base sm:text-lg text-gray-500 font-medium leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
@@ -289,7 +301,7 @@ const App = () => {
                   {["Expansão de Território", "Treinamento de Equipes", "Foco no PDV", "Relacionamento Técnico"].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-gray-100 shadow-sm transition-all hover:translate-x-1">
                        <CheckCircle2 size={20} className="text-black shrink-0" />
-                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-600">{item}</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest leading-none text-gray-500">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -416,16 +428,17 @@ const App = () => {
           <div className="relative bg-white w-full max-w-5xl h-[85vh] sm:h-[80vh] flex flex-col shadow-2xl overflow-hidden rounded-sm transition-all">
             <div className="flex border-b border-gray-100 bg-gray-50/50 text-center font-bold sticky top-0 z-20">
               <button onClick={() => setActiveAiTab('simulator')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'simulator' ? 'bg-white text-black' : 'hover:bg-gray-50 opacity-40'}`}>Simulador ✨</button>
+              <button onClick={() => setActiveAiTab('pitch')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'pitch' ? 'bg-white text-black' : 'hover:bg-gray-50 opacity-40'}`}>Pitch ✨</button>
               <button onClick={() => setActiveAiTab('chat')} className={`flex-1 p-5 sm:p-8 text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all ${activeAiTab === 'chat' ? 'bg-black text-white' : 'hover:bg-gray-50 opacity-40'}`}>Assistente ✨</button>
               <button onClick={() => setIsAiModalOpen(false)} className="p-5 sm:p-8 hover:text-red-500 transition-colors"><X size={28} /></button>
             </div>
             
             <div className="flex-1 overflow-y-auto p-6 sm:p-10 md:p-20 scroll-smooth">
-              {activeAiTab === 'simulator' ? (
+              {activeAiTab === 'simulator' && (
                 <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
                   <div className="text-center space-y-6">
                     <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Valide sua Marca no Interior</h4>
-                    <p className="text-gray-400 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
+                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Inteligência Comercial MAP & Gemini AI</p>
                   </div>
                   {!aiResponse && !isLoading ? (
                     <form onSubmit={handleAiConsultancy} className="space-y-10 sm:space-y-12">
@@ -454,7 +467,44 @@ const App = () => {
                     </div>
                   )}
                 </div>
-              ) : (
+              )}
+
+              {activeAiTab === 'pitch' && (
+                <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in pb-10">
+                  <div className="text-center space-y-6">
+                    <h4 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-black/90 text-balance leading-tight">Gerador de Pitch de Venda</h4>
+                    <p className="text-gray-600 text-lg sm:text-xl font-bold italic">Argumentos que convertem no Interior de SP ✨</p>
+                  </div>
+                  {!pitchResponse && !isLoading ? (
+                    <form onSubmit={handlePitchGeneration} className="space-y-10 sm:space-y-12">
+                      <textarea 
+                        required 
+                        value={pitchInput} 
+                        onChange={e => setPitchInput(e.target.value)} 
+                        placeholder="Qual produto quer vender? (Ex: Proteína Vegana, Monitor Cardíaco...)" 
+                        className="w-full bg-gray-50 border-2 border-gray-100 p-6 sm:p-10 h-60 focus:border-black outline-none text-lg sm:text-xl transition-colors font-bold resize-none" 
+                      />
+                      <button type="submit" disabled={isLoading} className="w-full bg-black text-white py-8 sm:py-10 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.6em] hover:bg-gray-800 transition-all shadow-2xl active:scale-95 disabled:opacity-50">
+                        {isLoading ? "CRIANDO PITCH..." : "GERAR ARGUMENTO ✨"}
+                      </button>
+                    </form>
+                  ) : isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
+                      <Mic2 className="animate-bounce text-black" size={64} sm:size={80} />
+                      <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4 text-gray-900">A criar estratégia de venda...</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-12 sm:space-y-16 animate-in zoom-in-95 text-balance">
+                       <div className="bg-gray-50 p-8 sm:p-14 border-l-[10px] sm:border-l-[12px] border-black text-lg sm:text-xl leading-relaxed whitespace-pre-wrap italic shadow-inner text-gray-900 font-bold">
+                        {pitchResponse}
+                       </div>
+                       <button onClick={() => setPitchResponse(null)} className="w-full border-4 border-black text-black py-8 text-[11px] sm:text-[12px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all active:scale-95">Criar Outro Pitch</button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeAiTab === 'chat' && (
                 <div className="h-full flex flex-col">
                   <div className="flex-1 overflow-y-auto space-y-8 sm:space-y-10 mb-10 pr-2 custom-scrollbar">
                     {chatMessages.map((msg, i) => (
