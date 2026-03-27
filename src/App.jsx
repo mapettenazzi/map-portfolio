@@ -85,13 +85,14 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // Função callGemini com sua chave de API inserida
+  // Função callGemini com modelo estável e sua chave de API
   const callGemini = async (prompt, systemInstruction) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
     if (!apiKey) return "Erro de configuração: Chave de API ausente.";
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    // Alterado para gemini-1.5-flash para garantir compatibilidade com v1beta
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     const payload = {
       contents: [{ parts: [{ text: prompt }] }],
@@ -126,7 +127,7 @@ const App = () => {
       const text = await fetchWithRetry();
       return text || "A IA não conseguiu processar os dados. Tente reformular seu texto.";
     } catch (err) {
-      return `Erro de conexão: ${err.message}. Verifique a internet e tente novamente.`;
+      return `Erro de conexão: ${err.message}. Verifique sua chave ou conexão.`;
     }
   };
 
@@ -193,7 +194,7 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - Logo Gigante no Mobile e Limpo */}
+      {/* HERO SECTION - Logo Restaurada com Visibilidade Máxima */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
         <div className="absolute inset-0 opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110 opacity-20" />
@@ -201,10 +202,10 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-5xl flex flex-col items-center">
-          {/* Tagline superior - Escondida no Mobile para dar foco total à logo */}
-          <div className="hidden sm:block mb-8 sm:mb-12">
-            <p className="text-[10px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance">
-              Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
+          {/* Tagline superior / Mini-logo: Restaurada e com opacidade maior para não ficar apagada */}
+          <div className="mb-8 sm:mb-12">
+            <p className="text-[12px] sm:text-xl md:text-2xl font-black uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-600 drop-shadow-sm text-balance">
+              Saúde <span className="mx-2 text-black/20">·</span> Inovação <span className="mx-2 text-black/20">·</span> Performance
             </p>
           </div>
 
@@ -219,14 +220,14 @@ const App = () => {
           </div>
 
           <div className="mt-12 sm:mt-16">
-             <a href="#atuacao" className="inline-block animate-bounce opacity-20 hover:opacity-100 transition-opacity">
+             <a href="#atuacao" className="inline-block animate-bounce opacity-40 hover:opacity-100 transition-opacity">
                 <ChevronRight className="rotate-90 w-12 h-12" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO - Texto primeiro, Imagem depois (Melhor UX mobile) */}
+      {/* SEÇÃO: ATUAÇÃO - Texto primeiro, Imagem depois (UX Mobile Fluida) */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
@@ -257,7 +258,6 @@ const App = () => {
             </div>
           </div>
 
-          {/* Foto Running abaixo no mobile para fechar a seção */}
           <div className="relative group p-4 bg-gray-50/50 rounded-sm border border-gray-100 shadow-sm order-last lg:order-none mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance Técnica" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
