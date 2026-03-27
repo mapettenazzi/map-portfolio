@@ -68,61 +68,31 @@ const ASSETS = {
   logoCircle: "logo-circle.png"
 };
 
-// Base de Dados de Cidades com Inteligência Real de Mercado
+// Base de Dados de Inteligência Territorial e Perfil de Consumo
 const CITY_PROFILES = {
-  "Campinas": { pib: "Alto (Tech/Ind)", focus: "Hub Global", characteristic: "Pólo logístico e tecnológico com o maior índice de potencial de consumo (IPC) do interior." },
-  "Ribeirão Preto": { pib: "Elevado (Agro/Saúde)", focus: "Saúde de Luxo", characteristic: "Centro de referência médica da América Latina com alta demanda por tecnologia hospitalar." },
-  "Sorocaba": { pib: "Industrial", focus: "Manufatura", characteristic: "Pólo industrial em expansão acelerada com forte presença de canais de varejo alimentar e fitness." },
-  "São José do Rio Preto": { pib: "Comercial/Saúde", focus: "Consumo Premium", characteristic: "Referência comercial do Noroeste Paulista com público de alto ticket em suplementação." },
-  "Bauru": { pib: "Serviços/Logística", focus: "Conexão Regional", characteristic: "Entroncamento estratégico de ferrovias e rodovias, facilitando o supply chain para 50+ cidades." },
-  "Piracicaba": { pib: "Bioenergético", focus: "Agroindústria", characteristic: "Economia sólida baseada na bioenergia e forte vertical de saúde e nutrição consolidada." },
-  "São Carlos": { pib: "Académico/Tech", focus: "Inovação", characteristic: "Alta densidade de mão de obra qualificada e consumo técnico-científico rigoroso." },
-  "Jundiaí": { pib: "Logística", focus: "Distribuição", characteristic: "Proximidade máxima com a capital, funcionando como pulmão de stock para redes de farmácias." },
-  "Marília": { pib: "Alimentar", focus: "Indústria", characteristic: "Capital nacional do alimento, facilitando a penetração de novas marcas de snacks e saudáveis." },
-  "Araraquara": { pib: "Agroindustrial", focus: "Citricultura", characteristic: "Mercado estável com alto poder aquisitivo no setor de serviços e comércio de rua." },
-  "Botucatu": { pib: "Biotecnologia", focus: "Saúde Especializada", characteristic: "Ecossistema de biotecnologia e hospitais universitários que validam inovações clínicas." },
-  "Presidente Prudente": { pib: "Oeste Paulista", focus: "Influência Regional", characteristic: "Capital administrativa do Oeste, polarizando o consumo de suplementação de 40 municípios." },
-  "Araçatuba": { pib: "Agroenergia", focus: "Desenvolvimento", characteristic: "Expansão de novos canais de varejo e modernização do setor hospitalar regional." },
-  "Franca": { pib: "Coureiro/Ind", focus: "Tradição Industrial", characteristic: "Pólo industrial com forte rede de academias e demanda crescente por nutrição desportiva." },
-  "Limeira": { pib: "Joalheiro/Ind", focus: "Manufatura", characteristic: "Dinâmica industrial forte que traciona o varejo de conveniência e alimentos funcionais." }
+  "Campinas": { pib: "Hub Tecnológico/Industrial", tier: 1, logistic: "Global/Viracopos", density: "Máxima", consumer: "Alta Renda/Tech", detail: "maior IPC do interior paulista." },
+  "Ribeirão Preto": { pib: "Agronegócio/Saúde", tier: 1, logistic: "Anel Viário Estratégico", density: "Alta", consumer: "Elite Agro/Saúde", detail: "pólo de saúde de alta complexidade." },
+  "Sorocaba": { pib: "Manufatura Avançada", tier: 1, logistic: "Castelo Branco/Rodoanel", density: "Alta", consumer: "Industrial/Executivo", detail: "crescimento industrial acelerado." },
+  "São José do Rio Preto": { pib: "Serviços/Medicina", tier: 2, logistic: "Washington Luís", density: "Média-Alta", consumer: "Comercial Premium", detail: "referência para o noroeste paulista." },
+  "Bauru": { pib: "Entroncamento Logístico", tier: 2, logistic: "Rodoferroviário Central", density: "Média-Alta", consumer: "Serviços/Universitário", detail: "centro geográfico estratégico do estado." },
+  "Piracicaba": { pib: "Bioenergia", tier: 2, logistic: "Corredor das Águas", density: "Média", consumer: "Agroindustrial", detail: "liderança no setor sucroalcooleiro." },
+  "São Carlos": { pib: "Alta Tecnologia", tier: 2, logistic: "Eixo Washington Luís", density: "Média", consumer: "Intelectual/Técnico", detail: "densidade intelectual superior." },
+  "Jundiaí": { pib: "Logística/Industrial", tier: 1, logistic: "Anhanguera/Bandeirantes", density: "Alta", consumer: "Misto/Premium", detail: "principal pulmão logístico de SP." },
+  "Marília": { pib: "Indústria Alimentar", tier: 2, logistic: "Comandante João Ribeiro", density: "Média", consumer: "Fidelizado/Tradicional", detail: "pólo nacional da indústria de alimentos." },
+  "Araraquara": { pib: "Agroindustrial", tier: 2, logistic: "Washington Luís", density: "Média", consumer: "Estável/Tradicional", detail: "economia sólida baseada na citricultura." },
+  "Botucatu": { pib: "Biotecnologia/Saúde", tier: 3, logistic: "Marechal Rondon", density: "Focada", consumer: "Especializado/Saúde", detail: "ecossistema de inovação em biotecnologia." },
+  "Presidente Prudente": { pib: "Capital do Oeste", tier: 3, logistic: "Raposo Tavares", density: "Focada", consumer: "Regional/Varejo", detail: "pólo administrativo regional do oeste." },
+  "Araçatuba": { pib: "Bioenergia/Pecuária", tier: 3, logistic: "Marechal Rondon", density: "Focada", consumer: "Agro/Comercial", detail: "pólo comercial do baixo tietê." },
+  "Franca": { pib: "Calçadista", tier: 2, logistic: "Cândido Portinari", density: "Média", consumer: "Operário/Varejo", detail: "tradição industrial com expansão de varejo." },
+  "Limeira": { pib: "Metalurgia/Jóias", tier: 2, logistic: "Anhanguera", density: "Média", consumer: "Industrial/Dinâmico", detail: "dinâmica industrial metal-mecânica forte." }
 };
 
 const SEGMENTS = [
-  { 
-    id: "hosp", 
-    name: "Hospitalar", 
-    score: 98, 
-    slogan: "Precisão cirúrgica no Supply Chain.",
-    strategy: "Foco na homologação técnica e venda consultiva para centros médicos de alta complexidade."
-  },
-  { 
-    id: "suple", 
-    name: "Suplementação", 
-    score: 95, 
-    slogan: "Nutrição científica, venda técnica.",
-    strategy: "Marketing de prescrição e ativação de farmácias independentes e redes premium."
-  },
-  { 
-    id: "perf", 
-    name: "Performance", 
-    score: 92, 
-    slogan: "Alta performance no PDV e no Treino.",
-    strategy: "Marketing de comunidade com assessorias de endurance e ginásios boutique."
-  },
-  { 
-    id: "esporte", 
-    name: "Nutrição Esportiva", 
-    score: 89, 
-    slogan: "Dominando o giro do varejo fitness.",
-    strategy: "Estratégias agressivas de sell-out e treinamento de balconistas para giro rápido."
-  },
-  { 
-    id: "alimentos", 
-    name: "Alimentos", 
-    score: 91, 
-    slogan: "Sabor funcional, giro constante.",
-    strategy: "Category Management em redes de conveniência e cafetarias corporativas."
-  }
+  { id: "hosp", name: "Hospitalar", baseScore: 94, slogan: "Precisão cirúrgica no Supply Chain." },
+  { id: "suple", name: "Suplementação", baseScore: 91, slogan: "Nutrição científica, venda técnica." },
+  { id: "perf", name: "Performance", baseScore: 88, slogan: "Alta performance no PDV e no Treino." },
+  { id: "esporte", name: "Nutrição Esportiva", baseScore: 85, slogan: "Dominando o giro do varejo fitness." },
+  { id: "alimentos", name: "Alimentos", baseScore: 89, slogan: "Sabor funcional, giro constante." }
 ];
 
 const App = () => {
@@ -148,22 +118,24 @@ const App = () => {
   };
 
   const currentSegment = SEGMENTS.find(s => s.id === segmentId) || SEGMENTS[0];
-  const currentCityData = CITY_PROFILES[city] || CITY_PROFILES["Campinas"];
+  const cityData = CITY_PROFILES[city] || CITY_PROFILES["Campinas"];
 
-  // Gerador de Parecer Personalizado (Inteligência de Vendas Cruzada)
-  const getCustomizedDiagnosis = () => {
-    const cityName = city;
-    const segName = currentSegment.name;
-
-    return {
-      description: `O pólo de ${cityName} é ${currentCityData.characteristic} Para a vertical ${segName}, isto significa uma oportunidade de penetração baseada em ${currentCityData.focus}.`,
-      sellIn: `Aproveitando a força de ${currentCityData.pib}, a estratégia de Sell-in focará em garantir volumes de segurança (Safety Stock) adaptados à logística regional, priorizando a entrada em grandes players locais.`,
-      sellOut: `Ativação de PDV através de treinamento técnico focado no perfil de consumidor de ${cityName}. Uso de Trade Marketing para garantir visibilidade nas zonas de maior fluxo (Hot Zones) das lojas.`,
-      expansion: `Abertura estratégica de novos canais em pólos de influência direta de ${cityName}, mapeando pontos de venda independentes com alto índice de faturamento regional.`
+  // Lógica de Geração de Diagnóstico Único por Cidade (Personalização Total)
+  const getPersonalizedData = () => {
+    const tierBonus = (4 - cityData.tier) * 2;
+    const finalScore = currentSegment.baseScore + tierBonus;
+    
+    const context = {
+      description: `O pólo de ${city} é ${cityData.detail} Para a vertical de ${currentSegment.name}, identificamos uma oportunidade baseada no perfil ${cityData.consumer}, utilizando a infraestrutura ${cityData.logistic}.`,
+      sellIn: `Estratégia de Sell-in focada na economia de ${cityData.pib}. Prioridade para contratos de volume com os 10 maiores players de ${city}, utilizando ${cityData.logistic} para otimização de custo de frete.`,
+      sellOut: `Ativação de Sell-out adaptada ao shopper de ${cityData.consumer}. Treinamento técnico das equipas de balcão focado no índice de densidade ${cityData.density} desta região específica.`,
+      expansion: `Plano de expansão para abertura de ${cityData.tier === 1 ? '15 a 20' : '5 a 10'} novos PDVs estratégicos em ${city} e micro-regiões de influência direta, mapeando canais de faturamento A/B.`
     };
+
+    return { score: finalScore > 99 ? 99 : finalScore, ...context };
   };
 
-  const diagnosis = getCustomizedDiagnosis();
+  const diag = getPersonalizedData();
 
   const handleEmailClick = () => {
     window.location.href = "mailto:maaprroyo@outlook.com?subject=Contato Estratégico - MAP Representações";
@@ -184,7 +156,7 @@ const App = () => {
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.4em] items-center text-gray-500 mx-auto lg:mx-0">
             <a href="#atuacao" className="hover:text-black transition hidden sm:inline">Atuação</a>
             <a href="#fundadora" className="hover:text-black transition hidden sm:inline">Fundadora</a>
-            <a href="#simulador" className="text-black font-black flex items-center gap-1">Inteligência <span className="animate-pulse">✨</span></a>
+            <a href="#simulador" className="text-black font-black flex items-center gap-1 border-b border-black">Inteligência <span className="animate-pulse">✨</span></a>
             <a href="#segmentos" className="hover:text-black transition">Segmentos</a>
             <a href="#contato" className="hover:text-black transition">Contato</a>
           </div>
@@ -193,23 +165,19 @@ const App = () => {
 
       {/* HERO SECTION */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-2">
-        <div className="absolute inset-0 max-sm:opacity-[0.02] sm:opacity-[0.06] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - Opacidade 20% e Escala 125% conforme solicitado */}
+        <div className="absolute inset-0 opacity-[0.20] scale-[1.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-105" />
         </div>
         
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_95%)] sm:bg-[radial-gradient(circle,_transparent_35%,_white_88%)]"></div>
 
         <div className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center px-4">
-          {/* Logo Principal - Ajuste Mobile Magnus: Super Larga (w-[130%]) perfeitamente centralizada */}
           <div className="relative inline-block transition-transform hover:scale-[1.01] duration-1000 max-sm:w-[130%] max-sm:ml-[-15%] sm:w-full sm:max-w-4xl mx-auto flex items-center justify-center">
             <div className="absolute inset-0 bg-white/60 blur-[140px] rounded-full scale-150 -z-10 hidden sm:block"></div>
             <div className="absolute inset-0 bg-white/40 blur-[60px] rounded-full scale-110 -z-10 sm:hidden"></div>
             
-            <SafeImage 
-              src={ASSETS.logoFullBlack} 
-              alt="MAP Representações" 
-              className="w-full h-auto object-contain mx-auto" 
-            />
+            <SafeImage src={ASSETS.logoFullBlack} alt="MAP Representações" className="w-full h-auto object-contain mx-auto" />
           </div>
           
           <div className="absolute bottom-16 sm:relative sm:mt-28 sm:bottom-auto">
@@ -220,13 +188,13 @@ const App = () => {
         </div>
       </section>
 
-      {/* SIMULADOR DE POTENCIAL - PARECER COMERCIAL COMPLETO 360º */}
+      {/* SIMULADOR DE POTENCIAL - PERSONALIZAÇÃO TOTAL POR CIDADE */}
       <section id="simulador" className="py-24 sm:py-32 px-6 bg-gray-50 border-y border-gray-100 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-2 px-4">
             <span className="text-[11px] font-black uppercase tracking-[0.5em] text-gray-400 block italic">Inteligência de Mercado & Expansão</span>
             <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter text-balance leading-tight">Diagnóstico Estratégico</h2>
-            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Análise baseada em dados reais de PIB e consumo regional.</p>
+            <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto">Validação baseada no PIB e perfil de consumo regional do Interior de SP.</p>
           </div>
 
           <div className="bg-white p-6 sm:p-14 shadow-2xl rounded-sm border border-gray-100">
@@ -263,7 +231,7 @@ const App = () => {
               className="w-full bg-black text-white py-8 text-[11px] font-black uppercase tracking-[0.5em] hover:bg-gray-800 transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-2xl"
             >
               {isSimulating ? (
-                <><Loader2 className="animate-spin" size={20} /> COMPILANDO PARECER COMERCIAL...</>
+                <><Loader2 className="animate-spin" size={20} /> COMPILANDO PARECER TÉCNICO...</>
               ) : (
                 <><BarChart size={20} /> GERAR PARECER COMERCIAL ✨</>
               )}
@@ -274,19 +242,19 @@ const App = () => {
                 <div className="grid lg:grid-cols-4 gap-10 items-start">
                   <div className="lg:col-span-1 space-y-6 text-center lg:text-left">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade Técnica</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Viabilidade em {city}</p>
                       <div className="text-7xl font-black tracking-tighter text-black flex items-baseline justify-center lg:justify-start">
-                        {currentSegment.score}<span className="text-xl opacity-20 ml-1">%</span>
+                        {diag.score}<span className="text-xl opacity-20 ml-1">%</span>
                       </div>
                     </div>
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-black text-white rounded-none w-full justify-center lg:justify-start shadow-xl">
                        <TrendingIcon size={14} />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Demanda: Alta</span>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Demanda: {cityData.density}</span>
                     </div>
                   </div>
                   
                   <div className="lg:col-span-3 space-y-8">
-                    <div className="bg-gray-50 p-6 sm:p-10 border-l-8 border-black shadow-inner space-y-8">
+                    <div className="bg-gray-50 p-6 sm:p-10 border-l-8 border-black shadow-inner space-y-6">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-6">
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 bg-black text-white flex items-center justify-center shadow-2xl">
@@ -294,7 +262,7 @@ const App = () => {
                           </div>
                           <div>
                             <h4 className="text-[18px] font-black uppercase tracking-[0.3em] leading-tight">Parecer Comercial</h4>
-                            <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest mt-1">Pólo Regional: {city}</p>
+                            <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest mt-1">Especialista: Mariá Pettenazzi</p>
                           </div>
                         </div>
                         <div className="px-4 py-1.5 border-2 border-black/10">
@@ -305,28 +273,28 @@ const App = () => {
                       <div className="space-y-6 text-gray-800">
                         <div className="space-y-2">
                            <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                              <MessageSquare size={16} className="text-black/30" /> Sumário Estratégico
+                              <MessageSquare size={16} className="text-black/30" /> Sumário Estratégico Regional
                            </h5>
                            <p className="text-base leading-snug font-medium text-justify">
-                              {diagnosis.description}
+                              {diag.description}
                            </p>
                         </div>
 
                         <div className="grid sm:grid-cols-2 gap-8">
                           <div className="space-y-2">
                              <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                                <PackageSearch size={16} className="text-black" /> Gestão de Sell-in
+                                <PackageSearch size={16} className="text-black" /> Gestão de Sell-in em {city}
                              </h5>
                              <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diagnosis.sellIn}"
+                                "{diag.sellIn}"
                              </p>
                           </div>
                           <div className="space-y-2">
                              <h5 className="text-[11px] font-black uppercase tracking-widest text-black flex items-center gap-2">
-                                <Zap size={16} className="text-black" /> Ativação de Sell-out
+                                <Zap size={16} className="text-black" /> Ativação de Sell-out em {city}
                              </h5>
                              <p className="text-sm leading-snug text-gray-700 font-medium italic border-l-2 border-gray-300 pl-4 text-justify">
-                                "{diagnosis.sellOut}"
+                                "{diag.sellOut}"
                              </p>
                           </div>
                         </div>
@@ -334,10 +302,10 @@ const App = () => {
                         <div className="bg-black text-white p-6 space-y-3 shadow-2xl relative overflow-hidden">
                            <div className="relative z-10">
                               <h5 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                 <TargetIcon size={14} /> Expansão e Abertura de Novos PDVs
+                                 <TargetIcon size={14} /> Expansão de PDVs em {city}
                               </h5>
                               <p className="text-base leading-snug font-bold tracking-tight mt-1">
-                                 {diagnosis.expansion}
+                                 {diag.expansion}
                               </p>
                            </div>
                            <div className="absolute -right-4 -bottom-4 opacity-10">
@@ -348,8 +316,8 @@ const App = () => {
 
                       <div className="mt-4 pt-6 border-t border-gray-200">
                          <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Embasaamento Técnico Aplicado:</p>
-                            <p className="text-sm text-gray-600 font-bold leading-tight uppercase tracking-tight">Foco em {currentCityData.pib} | {currentSegment.strategy}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 italic">Embasaamento Económico Aplicado:</p>
+                            <p className="text-sm text-gray-600 font-bold leading-tight uppercase tracking-tight">PIB Voltado para {cityData.pib} | Público {cityData.consumer}</p>
                          </div>
                       </div>
                     </div>
