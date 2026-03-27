@@ -147,9 +147,9 @@ const App = () => {
         `}
       </style>
 
-      {/* Navegação Fixa */}
-      <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/95 backdrop-blur-md py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-8'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-center">
+      {/* Navegação Fixa - Ajustada para Mobile */}
+      <nav className={`fixed w-full z-50 transition-all duration-700 ${scrolled ? 'bg-white/95 backdrop-blur-md py-3 sm:py-4 border-b border-gray-100 shadow-sm' : 'bg-transparent py-6 sm:py-8'}`}>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="hidden lg:flex gap-10 text-[10px] font-extrabold uppercase tracking-[0.4em] items-center">
             <a href="#atuacao" className="hover:opacity-40 transition">Atuação</a>
             <a href="#fundadora" className="hover:opacity-40 transition">Fundadora</a>
@@ -159,71 +159,79 @@ const App = () => {
             </button>
             <a href="#contato" className="hover:opacity-40 transition">Contato</a>
           </div>
-          <button onClick={() => setIsAiModalOpen(true)} className="lg:hidden p-2.5 bg-black text-white rounded-full">
-            <Sparkles size={18} />
-          </button>
+          
+          <div className="lg:hidden flex w-full justify-between items-center">
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">MAP Representações</span>
+            <button onClick={() => setIsAiModalOpen(true)} className="p-3 bg-black text-white rounded-full shadow-2xl active:scale-90 transition-transform">
+              <Sparkles size={20} />
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION - Ajustada para Mobile (Logo maior e espaçamentos maiores) */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center blur-[1.5px]">
+        <div className="absolute inset-0 opacity-[0.35] pointer-events-none transition-opacity duration-1000 flex items-center justify-center blur-[1px]">
           <SafeImage src={ASSETS.introPattern} alt="Background MAP" className="w-full h-full object-cover grayscale brightness-110" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_10%,_white_85%)]"></div>
 
-        <div className="relative z-10 text-center space-y-12 animate-fade-in w-full max-w-5xl">
+        <div className="relative z-10 text-center space-y-10 sm:space-y-12 animate-fade-in w-full max-w-5xl">
           <div className="space-y-6">
-            <p className="text-[12px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-500 drop-shadow-sm text-balance">
+            <p className="text-[10px] sm:text-xl md:text-2xl font-bold uppercase tracking-[0.3em] sm:tracking-[0.8em] text-gray-400 drop-shadow-sm text-balance px-4">
               Saúde <span className="mx-1 text-black/10">·</span> Inovação <span className="mx-1 text-black/10">·</span> Performance
             </p>
           </div>
-          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-8 sm:p-12">
-            <div className="absolute inset-0 bg-white/80 blur-[60px] rounded-full scale-110 -z-10"></div>
+
+          {/* Logo Principal - Forçada a ser maior no mobile (max-w-xs ou 340px) */}
+          <div className="relative inline-block transition-transform hover:scale-[1.01] duration-700 p-4 sm:p-12 w-full max-w-[340px] sm:max-w-2xl md:max-w-4xl mx-auto">
+            <div className="absolute inset-0 bg-white/70 blur-[40px] sm:blur-[60px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full max-w-[280px] sm:max-w-2xl md:max-w-4xl mx-auto object-contain" 
+              className="w-full h-auto object-contain drop-shadow-2xl" 
             />
           </div>
-          <div className="pt-8">
+
+          <div className="pt-6 sm:pt-8">
              <a href="#atuacao" className="inline-block animate-bounce opacity-30 hover:opacity-100 transition-opacity">
-                <ChevronRight className="rotate-90 w-10 h-10 sm:w-12" />
+                <ChevronRight className="rotate-90 w-10 h-10 sm:w-12 sm:h-12" />
              </a>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO: ATUAÇÃO */}
+      {/* SEÇÃO: ATUAÇÃO - Ajustada para Mobile (Empilhamento vertical e texto centralizado) */}
       <section id="atuacao" className="py-24 sm:py-32 px-6 max-w-7xl mx-auto border-t border-gray-50">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
-            <div className="space-y-8">
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-gray-300 italic">Interior de São Paulo</span>
+            <div className="space-y-8 text-center lg:text-left">
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.5em] text-gray-300 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
-              <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-light text-justify max-w-xl">
+              <p className="text-gray-500 leading-relaxed text-base sm:text-xl font-light text-justify max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
               </p>
             </div>
+            
             <div className="grid gap-10 sm:gap-12">
               {[
                 { title: "Presença em campo", desc: "Visitação activa e relacionamento directo.", icon: <MapPin /> },
                 { title: "Inteligência comercial", desc: "Mapeamento e desenvolvimento regional.", icon: <Search /> },
                 { title: "Relacionamento técnico", desc: "Conexão com profissionais de saúde.", icon: <Handshake /> }
               ].map((p, i) => (
-                <div key={i} className="flex gap-6 sm:gap-10 group items-start">
+                <div key={i} className="flex flex-col sm:flex-row gap-6 sm:gap-10 group items-center sm:items-start text-center sm:text-left">
                   <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
                     {React.cloneElement(p.icon, { size: 28, strokeWidth: 1.5 })}
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[16px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-base sm:text-lg text-gray-400 font-light leading-snug">{p.desc}</p>
+                    <p className="text-sm sm:text-lg text-gray-400 font-light leading-snug">{p.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative group">
+          <div className="relative group mt-12 lg:mt-0">
             <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl rounded-sm">
               <SafeImage src={ASSETS.photoRunning} alt="Performance" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000" />
             </div>
@@ -245,14 +253,17 @@ const App = () => {
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Nutricionista & Gestora Comercial</p>
              </div>
           </div>
+          
           <div className="space-y-10 order-1 lg:order-2">
-            <div className="space-y-6 pt-20">
+            <div className="space-y-6 pt-10 sm:pt-20">
               <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300">Fundadora</span>
               <h3 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tighter text-balance leading-none mt-6">Mariá Pettenazzi</h3>
               <p className="text-xl sm:text-2xl font-medium text-black/70 italic border-l-8 border-black pl-6 sm:pl-10 leading-tight">Autoridade técnica para expansão regional.</p>
             </div>
-            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-lg font-light max-w-xl">
+            
+            <div className="space-y-6 text-gray-600 leading-relaxed text-justify text-base sm:text-lg font-light max-w-xl">
               <p>Com vasta experiência em vendas consultivas e expansão territorial, Mariá utiliza a formação técnica para educar o PDV e garantir que o valor real da marca seja comunicado com precisão técnica.</p>
+              
               <div className="pt-8 border-t border-gray-200">
                 <h4 className="text-[12px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 italic uppercase">Trajetória na Mercur S.A.</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -276,6 +287,7 @@ const App = () => {
             <span className="text-[11px] font-bold uppercase tracking-[0.6em] opacity-30 block italic">Portfólio Estratégico</span>
             <h3 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase text-balance">Segmentos Estratégicos</h3>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-white/10 border border-white/10">
             {[
               { title: "Nutracêuticos", icon: <Apple />, items: ["Ômega-3", "NAC", "Vitaminas"] },
@@ -288,7 +300,7 @@ const App = () => {
                 <div className="mb-8 opacity-30 group-hover:opacity-100 transition-opacity">
                   {React.cloneElement(s.icon, { size: 32, strokeWidth: 1 })}
                 </div>
-                <h4 className="text-[14px] font-extrabold uppercase tracking-widest mb-6 h-10 flex items-center border-b border-current pb-4 leading-none">{s.title}</h4>
+                <h4 className="text-[14px] font-extrabold uppercase tracking-widest mb-6 h-auto sm:h-10 flex items-center border-b border-current pb-4 leading-tight">{s.title}</h4>
                 <ul className="space-y-4">
                   {s.items.map((item, idx) => (
                     <li key={idx} className="text-[10px] sm:text-[11px] uppercase tracking-widest opacity-30 group-hover:opacity-100 flex items-center gap-3">
@@ -319,6 +331,7 @@ const App = () => {
                     ))}
                   </div>
                 </div>
+                
                 <div className="bg-gray-50 p-8 rounded-sm border-l-4 border-black">
                   <h4 className="text-[10px] font-black uppercase tracking-widest mb-4">Cidades Complementares</h4>
                   <p className="text-[11px] text-gray-400 uppercase tracking-widest leading-relaxed text-balance">
@@ -327,13 +340,13 @@ const App = () => {
                 </div>
             </div>
           </div>
-          <div className="bg-black text-white p-12 sm:p-16 shadow-2xl relative overflow-hidden flex flex-col justify-between rounded-sm">
+          <div className="bg-black text-white p-12 sm:p-16 shadow-2xl relative overflow-hidden flex flex-col justify-between rounded-sm mt-12 lg:mt-0">
             <div className="relative z-10">
               <h3 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tighter mb-12 sm:mb-16 border-b border-white/20 pb-6">Canais Estratégicos</h3>
               <ul className="space-y-8">
                   {["Lojas de Suplementos", "Academias e CrossFit", "Empórios Saudáveis", "Farmácias & Drogarias", "Profissionais da Saúde", "Varejo Regional"].map((c, i) => (
-                  <li key={i} className="flex items-center gap-6 sm:gap-8 text-[12px] sm:text-[14px] font-extrabold uppercase tracking-widest group leading-none">
-                      <ArrowRight size={20} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-4 transition-all" /> {c}
+                  <li key={i} className="flex items-center gap-6 sm:gap-8 text-[12px] sm:text-[14px] font-extrabold uppercase tracking-widest group leading-tight">
+                      <ArrowRight size={20} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-4 transition-all shrink-0" /> {c}
                   </li>
                   ))}
               </ul>
@@ -348,15 +361,17 @@ const App = () => {
         <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center blur-[4px]">
            <SafeImage src={ASSETS.footerPattern} alt="Footer Background" className="w-full h-full object-cover" />
         </div>
+
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-16">
           <div className="space-y-8">
             <h4 className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase tracking-tighter text-white/90 text-balance leading-tight">Sua marca no interior paulista.</h4>
             <div className="w-20 h-1 bg-white/20 mx-auto"></div>
             <p className="text-gray-400 uppercase tracking-widest text-sm sm:text-base font-bold italic">Bauru – São Paulo | Brasil</p>
           </div>
+          
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
-               <div className="space-y-2">
+               <div className="space-y-4">
                  <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-bold tracking-[0.2em]">Contacto Comercial Direto</p>
                  <p className="text-3xl sm:text-4xl font-black tracking-tighter leading-none">(14) 99193-4185</p>
                  <button onClick={handleEmailClick} className="text-lg sm:text-xl font-bold hover:underline opacity-80 block mt-4 break-all mx-auto">maaprroyo@outlook.com</button>
@@ -372,7 +387,7 @@ const App = () => {
       {/* BOTÃO CHAT FLUTUANTE */}
       <button 
         onClick={() => { setIsAiModalOpen(true); setActiveAiTab('chat'); }}
-        className="fixed bottom-10 right-10 z-[60] bg-black text-white p-6 sm:p-7 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-4 group"
+        className="fixed bottom-10 right-10 z-[60] bg-black text-white p-6 sm:p-7 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-4 group"
       >
         <MessageSquare size={28} />
         <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-widest hidden lg:inline-block w-0 group-hover:w-auto overflow-hidden transition-all duration-500 whitespace-nowrap font-extrabold">CONSULTORIA ONLINE ✨</span>
@@ -402,7 +417,7 @@ const App = () => {
                     </form>
                   ) : isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 space-y-10 animate-pulse text-center">
-                      <Loader2 className="animate-spin text-black" size={64} />
+                      <Loader2 className="animate-spin text-black" size={64} sm:size={80} />
                       <p className="text-[12px] sm:text-[14px] font-black uppercase tracking-[0.4em] mt-4">Cruzando dados técnicos...</p>
                     </div>
                   ) : (
@@ -426,7 +441,7 @@ const App = () => {
                   </div>
                   <form onSubmit={handleChat} className="flex gap-4 sm:gap-8 border-t border-gray-100 pt-10">
                     <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Tire sua dúvida técnica sobre expansão regional..." className="flex-1 bg-gray-50 border-2 border-gray-100 p-8 sm:p-10 outline-none focus:border-black text-lg sm:text-xl font-light" />
-                    <button type="submit" className="bg-black text-white px-10 sm:px-16 p-10 hover:bg-gray-800 transition-all shadow-xl"><Send size={32} /></button>
+                    <button type="submit" className="bg-black text-white px-10 sm:px-16 p-10 hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center"><Send size={32} /></button>
                   </form>
                 </div>
               )}
