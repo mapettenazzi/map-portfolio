@@ -87,54 +87,54 @@ const App = () => {
     }
   }, [chatMessages, isAiModalOpen]);
 
-  // ENGINE IA: Versão Blindada - Estrutura Simplificada para Garantir Sucesso Total
-  const callGemini = async (prompt, systemContext) => {
-    // Chave Validada pelo Usuário
+  /**
+   * ENGINE IA - VERSÃO ESPECIALISTA 2026
+   * Correção de Erros de Rede e Protocolo v1beta
+   */
+  const callGemini = async (userPrompt, roleContext) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Endpoint mais estável para v1beta
+    // Endpoint Standard para gemini-1.5-flash (O mais estável para front-end)
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
-    // Mesclamos a instrução de sistema diretamente no texto para evitar erros de compatibilidade de campos
-    const combinedPrompt = `[INSTRUÇÃO DE SISTEMA PRIORITÁRIA]: ${systemContext}\n\n[DADOS DO CLIENTE]: ${prompt}`;
-
-    const payload = {
-      contents: [{
-        parts: [{ text: combinedPrompt }]
-      }],
+    const requestPayload = {
+      contents: [
+        {
+          parts: [
+            { 
+              text: `INSTRUÇÕES ESTRATÉGICAS MAP REPRESENTAÇÕES:\n${roleContext}\n\nSOLICITAÇÃO DO CLIENTE:\n${userPrompt}` 
+            }
+          ]
+        }
+      ],
       generationConfig: {
         temperature: 0.7,
-        topP: 0.8,
-        topK: 40,
-        maxOutputTokens: 1500,
+        maxOutputTokens: 1200,
       }
     };
 
-    // Lógica de Re-tentativa embutida
-    for (let i = 0; i < 3; i++) {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        const result = await response.json();
-        
-        if (result.error) {
-          console.error("Erro da API Gemini:", result.error.message);
-          if (i === 2) throw new Error(result.error.message);
-          continue; // Tenta novamente
-        }
-        
-        const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (responseText) return responseText;
-        
-      } catch (error) {
-        console.error(`Tentativa ${i+1} falhou:`, error);
-        if (i === 2) return "Lamentamos, mas o servidor de IA está com instabilidade momentânea. Por favor, tente novamente em alguns segundos.";
-        await new Promise(res => setTimeout(res, 1000)); // Espera 1s antes de repetir
+    // Tentativa Única Robusta com Log de Erro Técnico
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestPayload)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // Se a API retornar erro, mostramos o erro real para debug
+        console.error("DEBUG API GOOGLE:", data);
+        return `Erro Técnico: ${data.error?.message || "Falha na comunicação com o servidor"}`;
       }
+
+      const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      return aiText || "O servidor não devolveu texto. Por favor, reformule a sua frase.";
+
+    } catch (networkError) {
+      console.error("ERRO DE REDE:", networkError);
+      return "Falha de ligação: Verifique a sua internet ou tente novamente em instantes.";
     }
   };
 
@@ -142,9 +142,10 @@ const App = () => {
     e.preventDefault();
     if (!productInfo.trim() || isLoading) return;
     setIsLoading(true);
+    setAiResponse(null);
     const res = await callGemini(
       productInfo,
-      "Age como Mariá Pettenazzi, estrategista comercial da MAP Representações. Analisa produtos para o interior de São Paulo (Bauru, Marília, Ribeirão Preto, etc). Fornece uma análise de viabilidade técnica, comercial e de logística. Sê direta, profissional e usa um tom executivo."
+      "És a Mariá Pettenazzi, estrategista comercial experiente. Analisa este produto para o mercado do interior de São Paulo. Sê técnica, nítida e fornece insights sobre viabilidade e logística."
     );
     setAiResponse(res);
     setIsLoading(false);
@@ -154,9 +155,10 @@ const App = () => {
     e.preventDefault();
     if (!pitchInput.trim() || isLoading) return;
     setIsLoading(true);
+    setPitchResponse(null);
     const res = await callGemini(
       pitchInput,
-      "Age como Mariá Pettenazzi. Cria um PITCH DE VENDA matador focado em convencer lojistas de nutrição e gerentes de hospitais no interior de SP. Destaca os benefícios técnicos e a autoridade da marca. Usa parágrafos curtos e impacto comercial."
+      "És a Mariá Pettenazzi. Cria um pitch de venda persuasivo e profissional para lojistas e hospitais. Foca na autoridade da MAP e nos benefícios técnicos do produto no interior de SP."
     );
     setPitchResponse(res);
     setIsLoading(false);
@@ -172,7 +174,7 @@ const App = () => {
     
     const res = await callGemini(
       chatInput, 
-      "És o Assistente Virtual da MAP Representações. Responde a dúvidas sobre a nossa área de atuação, os nossos segmentos (Hospitalar, Performance, Snacks) e como podemos ajudar indústrias a expandir no interior de SP."
+      "És o Assistente Virtual da MAP Representações. Esclarece dúvidas sobre a nossa representação comercial, os nossos segmentos e a nossa vasta experiência no interior paulista."
     );
     
     setChatMessages(prev => [...prev, { role: 'ai', text: res }]);
@@ -212,9 +214,10 @@ const App = () => {
         </div>
       </nav>
 
-      {/* HERO SECTION - REVISÃO MOBILE FINAL */}
+      {/* HERO SECTION - MOBILE GIGANTE */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.30] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
+        {/* Padrão de Fundo - Opacidade mínima 0.07 para não brigar com a logo */}
+        <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
             alt="Padrão MAP" 
@@ -224,12 +227,13 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
+          {/* Logo Mobile em Escala Máxima */}
           <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.50] sm:scale-100">
             <div className="absolute inset-0 bg-white/40 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
               src={ASSETS.logoFullBlack} 
               alt="MAP Representações" 
-              className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.05)]" 
+              className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.04)]" 
             />
           </div>
           <div className="mt-32 sm:mt-24">
@@ -245,7 +249,7 @@ const App = () => {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-8 text-center lg:text-left">
-              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400/70 italic block">Interior de São Paulo</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gray-400 italic block">Interior de São Paulo</span>
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter uppercase text-balance">Expansão Comercial.</h2>
               <p className="text-gray-500 leading-relaxed text-lg sm:text-xl font-medium text-justify lg:text-left max-w-xl mx-auto lg:mx-0">
                 A MAP Representações atua no desenvolvimento comercial de marcas no interior paulista. Conectamos a indústria a canais especializados através de um trabalho consultivo.
