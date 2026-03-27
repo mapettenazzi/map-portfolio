@@ -88,54 +88,60 @@ const App = () => {
   }, [chatMessages, isAiModalOpen]);
 
   /**
-   * ENGINE IA - VERSÃO ESPECIALISTA 2026
-   * Correção de Erros de Rede e Protocolo v1beta
+   * ENGINE IA - VERSÃO BLINDADA 2026
+   * Correção definitiva de modelos e cabeçalhos da Google
    */
   const callGemini = async (userPrompt, roleContext) => {
     const apiKey = "AIzaSyCoFg3qKD8iAO91WyO24OhX6QfM3EMJhH8"; 
     
-    // Endpoint Standard para gemini-1.5-flash (O mais estável para front-end)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Lista de modelos por ordem de prioridade para evitar o erro "not found"
+    const models = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-pro"];
     
-    const requestPayload = {
-      contents: [
-        {
-          parts: [
-            { 
-              text: `INSTRUÇÕES ESTRATÉGICAS MAP REPRESENTAÇÕES:\n${roleContext}\n\nSOLICITAÇÃO DO CLIENTE:\n${userPrompt}` 
-            }
-          ]
+    for (const modelName of models) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      
+      const requestPayload = {
+        contents: [
+          {
+            parts: [
+              { 
+                text: `INSTRUÇÕES ESTRATÉGICAS:\n${roleContext}\n\nCLIENTE:\n${userPrompt}` 
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000,
         }
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1200,
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestPayload)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (aiText) return aiText;
+        } else {
+          // Se o erro for que o modelo não existe, tentamos o próximo da lista
+          if (data.error?.message?.includes("not found") || data.error?.status === "INVALID_ARGUMENT") {
+            console.warn(`Modelo ${modelName} falhou, a tentar o próximo...`);
+            continue;
+          }
+          return `Erro Técnico: ${data.error?.message || "Erro desconhecido"}`;
+        }
+      } catch (err) {
+        console.error("Erro de rede na tentativa:", err);
       }
-    };
-
-    // Tentativa Única Robusta com Log de Erro Técnico
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestPayload)
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        // Se a API retornar erro, mostramos o erro real para debug
-        console.error("DEBUG API GOOGLE:", data);
-        return `Erro Técnico: ${data.error?.message || "Falha na comunicação com o servidor"}`;
-      }
-
-      const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      return aiText || "O servidor não devolveu texto. Por favor, reformule a sua frase.";
-
-    } catch (networkError) {
-      console.error("ERRO DE REDE:", networkError);
-      return "Falha de ligação: Verifique a sua internet ou tente novamente em instantes.";
     }
+    
+    return "Lamentamos, mas não foi possível ligar ao motor de IA após várias tentativas. Verifique a validade da sua API Key no Google AI Studio.";
   };
 
   const handleAiConsultancy = async (e) => {
@@ -216,7 +222,6 @@ const App = () => {
 
       {/* HERO SECTION - MOBILE GIGANTE */}
       <section className="relative h-screen flex flex-col items-center justify-center bg-white overflow-hidden px-4">
-        {/* Padrão de Fundo - Opacidade mínima 0.07 para não brigar com a logo */}
         <div className="absolute inset-0 max-sm:opacity-[0.07] sm:opacity-[0.25] pointer-events-none transition-opacity duration-1000 flex items-center justify-center">
           <SafeImage 
             src={ASSETS.introPattern} 
@@ -227,7 +232,6 @@ const App = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_white_98%)]"></div>
 
         <div className="relative z-10 text-center animate-fade-in w-full max-w-7xl flex flex-col items-center">
-          {/* Logo Mobile em Escala Máxima */}
           <div className="relative inline-block transition-transform hover:scale-[1.02] duration-1000 w-full max-w-[95vw] sm:max-w-6xl mx-auto scale-[1.50] sm:scale-100">
             <div className="absolute inset-0 bg-white/40 blur-[80px] rounded-full scale-110 -z-10"></div>
             <SafeImage 
@@ -268,7 +272,7 @@ const App = () => {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest">{p.title}</h4>
-                    <p className="text-base sm:text-lg text-gray-500 font-medium leading-relaxed">{p.desc}</p>
+                    <p className="text-base sm:text-lg text-gray-400 font-medium leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               ))}
@@ -409,7 +413,7 @@ const App = () => {
           <div className="bg-white/5 backdrop-blur-3xl p-10 sm:p-14 border border-white/10 shadow-2xl rounded-sm inline-block w-full max-w-2xl">
              <div className="space-y-8">
                <div className="space-y-4">
-                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-black tracking-[0.2em]">Contacto Comercial Direto</p>
+                 <p className="text-[12px] font-bold uppercase tracking-widest opacity-40 italic font-bold tracking-[0.2em]">Contacto Comercial Direto</p>
                  <p className="text-3xl sm:text-4xl font-black tracking-tighter leading-none">(14) 99193-4185</p>
                  <button onClick={handleEmailClick} className="text-lg sm:text-xl font-bold hover:underline opacity-80 block mt-4 break-all mx-auto">maaprroyo@outlook.com</button>
                </div>
